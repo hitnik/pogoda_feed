@@ -6,4 +6,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         feed = feedparser.parse(WEATHER_FEED_URL)
-        print(feed.entries)
+        date = feed.entries[0].updated_parsed
+        print(date)
