@@ -3,7 +3,7 @@ import feedparser
 import time
 import pytz
 import datetime
-from weather_danger_feed.config import WEATHER_FEED_URL
+from hazard_feed.config import WEATHER_FEED_URL
 
 class Command(BaseCommand):
 
