@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand, CommandError
-import feedparser
-import time
-import pytz
-import datetime
 from hazard_feed.config import WEATHER_FEED_URL
+from hazard_feed.utils import parse_weather_feeds, put_feed_to_db
+import datetime
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        feeds = feedparser.parse(WEATHER_FEED_URL)
-        for feed in feeds.entries:
-            ms = int(time.mktime(feed.updated_parsed))
-            date = datetime.datetime.fromtimestamp(ms).replace(tzinfo=pytz.utc)
+        feeds = parse_weather_feeds(WEATHER_FEED_URL)
+        for feed in feeds:
+            print(feed.resency())
+            print(feed.is_newer_that(datetime.timedelta(hours=1)))
+            # put_result = put_feed_to_db(feed)
+            # if put_result and feed.

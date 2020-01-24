@@ -1,3 +1,5 @@
+import datetime
+import pytz
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.utils.translation import gettext as _
@@ -25,3 +27,11 @@ class HazardFeeds(models.Model):
     class Meta:
         verbose_name = _('Hazard Feed')
         verbose_name_plural = _('Hazard Feeds')
+
+    def resency(self):
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        return now-self.date
+
+    def is_newer_that(self, timedelta):
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        return now-self.date < timedelta
