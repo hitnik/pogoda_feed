@@ -8,7 +8,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
         for feed in feeds:
-            print(feed.resency())
-            print(feed.is_newer_that(datetime.timedelta(hours=1)))
-            # put_result = put_feed_to_db(feed)
-            # if put_result and feed.
+            put_result = put_feed_to_db(feed)
+            if put_result and \
+                    (
+                        feed.date.date() == feed.date_modified.date() or
+                        feed.is_newer_that(datetime.timedelta(hours=1))
+                    ):
+                pass

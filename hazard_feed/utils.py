@@ -44,3 +44,31 @@ def put_feed_to_db(feed):
         return True
     return False
 
+def sendmail():
+    today = datetime.date.today()
+    oneday = datetime.timedelta(days=1)
+    yesterday = today - oneday
+    dateString = format_date(yesterday, format='long', locale='ru')
+    URLStart = settings.DJANGO_HOST
+    url = 'http://' + URLStart + '/forums/1/' + str(yesterday.year) + '/' + str(yesterday.month) + '/' + str(
+        yesterday.day)
+
+    employees = Еmployees.objects.filter(isActive=True)
+    topicsCount = Topics.objects.filter(datePost__date=yesterday).count()
+
+    with mail.get_connection() as connection:
+        for employee in employees:
+            if employee.patronymic:
+                fullName = employee.firstName + ' ' + employee.patronymic
+            else:
+                fullName = employee.firstName
+            t = loader.get_template('forumTopics/email.html')
+            context = {'fullName': fullName, 'dateString': dateString,
+                       'url': url, 'topicsCount': topicsCount}
+            html = t.render(context)
+            text = 'Здравствуйте, ' + fullName + '. За ' + dateString + \
+                   ' оставлено ' + str(topicsCount) + ' отзывов о Белтелеком.  Информация в прикрепленном файле или по ссылке:' + url
+            subject = 'Отзывы о Белтелеком за ' + yesterday.strftime('%d.%m.%Y')
+            msg = EmailMultiAlternatives(subject, text, 'ОДО <omc@main.beltelecom.by>', [employee.email])
+            msg.attach_alternative(html, "text/html")
+            msg.send()

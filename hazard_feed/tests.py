@@ -17,3 +17,11 @@ class TestUtils(TestCase):
         if len(feeds) > 1:
             self.assertTrue(put_feed_to_db(feeds[1]))
 
+    def test_date_compare(self):
+        d1 = datetime.datetime.utcnow()
+        d2 = datetime.datetime.utcnow()+datetime.timedelta(hours=3)
+        d3 = datetime.datetime.utcnow()+datetime.timedelta(days=1)
+        self.assertEqual(d1.date(), d2.date())
+        self.assertNotEqual(d1.date(), d3.date())
+
+
