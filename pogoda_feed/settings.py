@@ -122,9 +122,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-USE_TSL = os.getenv('USE_TSL')
-EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+WEATHER_EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+WEATHER_EMAIL_HOST = os.getenv('EMAIL_HOST')
+WEATHER_USE_TSL = os.getenv('USE_TSL')
+WEATHER_EMAIL_PORT = os.getenv('EMAIL_PORT')
+WEATHER_EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+WEATHER_EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+WEATHER_EMAIL_FROM = 'Телекс ОДО'

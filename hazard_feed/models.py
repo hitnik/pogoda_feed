@@ -9,6 +9,7 @@ from django.utils.translation import gettext as _
 class HazardLevels(models.Model):
     title = models.CharField(max_length=32)
     danger_level = models.IntegerField(validators=[MaxValueValidator(10)])
+    color_code = models.CharField(max_length=6, null=True)
     description = models.TextField()
 
     class Meta:
@@ -35,3 +36,13 @@ class HazardFeeds(models.Model):
     def is_newer_that(self, timedelta):
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         return now-self.date < timedelta
+
+class WeatherRecipients(models.Model):
+    email = models.EmailField()
+    title = models.CharField(max_length=64, null=True)
+    is_active = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _('Weather hazard recipient')
+        verbose_name_plural = _('Weather hazard recipients')
+
