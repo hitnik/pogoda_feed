@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Minsk'
 
 USE_I18N = True
 
@@ -121,7 +121,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-EMAIL_HOST = '10.250.0.91'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = 'omc'
-EMAIL_HOST_PASSWORD = 'center'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+USE_TSL = os.getenv('USE_TSL')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
