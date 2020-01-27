@@ -6,9 +6,12 @@ import pytz
 from .models import HazardLevels, HazardFeeds, WeatherRecipients
 from django.conf import settings
 import smtplib
+import aiosmtplib
 from django.template import loader
+from asgiref.sync import sync_to_async
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
+
 
 def hazard_level_in_text_find(text):
     """
@@ -65,18 +68,28 @@ def make_weather_hazard_message(feed):
     msg.add_alternative(html, subtype='html')
     return msg
 
+def get_weather_recipients():
+    return list(WeatherRecipients.objects.filter(is_active=True).values_list('email', flat=True))
 
+async def send_weather_mail(msg, recipients):
 
-def send_weather_mail(msg):
+    """
+    try to get queryset with async
+    :param msg:
+    :param recipients:
+    :return:
+    """
+    recipients = await get_weather_recipients()
 
-    recipients = list(WeatherRecipients.objects.filter(is_active=True).values_list('email', flat=True))
-    smtp_server = smtplib.SMTP(host=settings.WEATHER_EMAIL_SMTP_HOST, port=settings.WEATHER_EMAIL_SMTP_PORT)
-    if settings.WEATHER_USE_TSL:
-        smtp_server.starttls()
-    smtp_server.login(user=settings.WEATHER_EMAIL_HOST_USER,
-                        password=settings.WEATHER_EMAIL_HOST_PASSWORD)
-    smtp_server.ehlo()
-    smtp_server.send_message(msg, to_addrs=recipients)
-    smtp_server.quit()
+    await aiosmtplib.send(
+        msg,
+        hostname=settings.WEATHER_EMAIL_SMTP_HOST,
+        port=settings.WEATHER_EMAIL_IMAP_PORT,
+        use_tls=settings.WEATHER_USE_TSL,
+        username=settings.WEATHER_EMAIL_HOST_USER,
+        password=settings.WEATHER_EMAIL_HOST_PASSWORD,
+        sender=settings.WEATHER_EMAIL_FROM,
+        recipients=recipients
+    )
 
-def get_weather_mail():
+# def get_weather_mail():
