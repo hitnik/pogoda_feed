@@ -73,8 +73,10 @@ def send_weather_mail(msg):
     smtp_server = smtplib.SMTP(host=settings.WEATHER_EMAIL_SMTP_HOST, port=settings.WEATHER_EMAIL_SMTP_PORT)
     if settings.WEATHER_USE_TSL:
         smtp_server.starttls()
-    smtp_server.login(user=settings.WEATHER_EMAIL_SMTP_HOST_USER,
-                        password=settings.WEATHER_EMAIL_SMTP_HOST_PASSWORD)
+    smtp_server.login(user=settings.WEATHER_EMAIL_HOST_USER,
+                        password=settings.WEATHER_EMAIL_HOST_PASSWORD)
     smtp_server.ehlo()
     smtp_server.send_message(msg, to_addrs=recipients)
     smtp_server.quit()
+
+def get_weather_mail():
