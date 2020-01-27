@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from hazard_feed.config import WEATHER_FEED_URL
-from hazard_feed.utils import parse_weather_feeds, put_feed_to_db
+from hazard_feed.utils import (
+    parse_weather_feeds, put_feed_to_db,
+    make_weather_hazard_message, send_weather_mail
+    )
 import datetime
 
 class Command(BaseCommand):
@@ -14,4 +17,5 @@ class Command(BaseCommand):
                         feed.date.date() == feed.date_modified.date() or
                         feed.is_newer_that(datetime.timedelta(hours=1))
                     ):
-                pass
+                msg = make_weather_hazard_message(feed)
+                send_weather_mail(msg)

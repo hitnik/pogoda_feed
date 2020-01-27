@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HazardLevels,HazardFeeds, EmailRecipients
+from .models import HazardLevels,HazardFeeds, WeatherRecipients
 
 @admin.register(HazardLevels)
 class HazardLevelsAdmin(admin.ModelAdmin):
@@ -9,6 +9,6 @@ class HazardLevelsAdmin(admin.ModelAdmin):
 class HazardFeedsAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(EmailRecipients)
-class EmailRecipientsAdmin(admin.ModelAdmin):
+@admin.register(WeatherRecipients)
+class WeatherRecipientsAdmin(admin.ModelAdmin):
     pass

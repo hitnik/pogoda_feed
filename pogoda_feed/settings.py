@@ -122,10 +122,29 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-WEATHER_EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-WEATHER_EMAIL_HOST = os.getenv('EMAIL_HOST')
+RQ_QUEUES = {
+    'default': {
+        'HOST': '127.0.0.1',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'high': {
+        'HOST': '127.0.0.1',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 500,
+    },
+    'low': {
+        'HOST': '127.0.0.1',
+        'PORT': 6379,
+        'DB': 0,
+    }
+}
+
+WEATHER_EMAIL_SMTP_HOST = os.getenv('EMAIL_SMTP_HOST')
 WEATHER_USE_TSL = os.getenv('USE_TSL')
-WEATHER_EMAIL_PORT = os.getenv('EMAIL_PORT')
-WEATHER_EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-WEATHER_EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-WEATHER_EMAIL_FROM = 'Телекс ОДО'
+WEATHER_EMAIL_SMTP_PORT = os.getenv('EMAIL_SMTP_PORT')
+WEATHER_EMAIL_SMTP_HOST_USER = os.getenv('EMAIL_SMTP_HOST_USER')
+WEATHER_EMAIL_SMTP_HOST_PASSWORD = os.getenv('EMAIL_SMTP_HOST_PASSWORD')
+WEATHER_EMAIL_FROM = 'Телекс ОДО <telex@mck.beltelecom.by>'
