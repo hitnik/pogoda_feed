@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_rq',
     'hazard_feed',
 ]
 
@@ -123,34 +124,34 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 STATIC_URL = '/static/'
-
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    'static/',
+]
 
 RQ_QUEUES = {
     'default': {
-        'HOST': '127.0.0.1',
-        'PORT': 6379,
+        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
         'DEFAULT_TIMEOUT': 360,
     },
     'high': {
-        'HOST': '127.0.0.1',
-        'PORT': 6379,
+        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
     },
     'low': {
-        'HOST': '127.0.0.1',
-        'PORT': 6379,
+        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
     }
 }
+
 
 WEATHER_EMAIL_SMTP_HOST = os.getenv('EMAIL_SMTP_HOST')
 WEATHER_EMAIL_IMAP_HOST = os.getenv('EMAIL_IMAP_HOST')
