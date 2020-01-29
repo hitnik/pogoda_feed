@@ -1,11 +1,9 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from .utils import *
 from .config import WEATHER_FEED_URL
-from .models import WeatherRecipients
+from django.apps import apps
 import asyncio
-import os
-import env
-from django.conf import settings
+
 
 
 class TestUtils(TestCase):
@@ -14,9 +12,6 @@ class TestUtils(TestCase):
     def setUp(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
         feeds[0].save()
-        WeatherRecipients.objects.create(email='pavelkluevminsk@gmail.com', is_active=True)
-        WeatherRecipients.objects.create(email='hitnik@gmail.com', is_active=True)
-        WeatherRecipients.objects.create(email='django.odo@gmail.com', is_active=True)
 
     def test_put_feed_to_db(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
@@ -31,17 +26,13 @@ class TestUtils(TestCase):
         # self.assertEqual(d1.date(), d2.date())
         self.assertNotEqual(d1.date(), d3.date())
 
-    @override_settings(
-        WEATHER_EMAIL_SMTP_HOST=env.WEATHER_EMAIL_SMTP_HOST,
-        WEATHER_EMAIL_IMAP_PORT=env.WEATHER_EMAIL_IMAP_PORT,
-        WEATHER_USE_TSL=env.WEATHER_USE_TSL,
-        WEATHER_EMAIL_HOST_USER=env.WEATHER_EMAIL_HOST_USER,
-        WEATHER_EMAIL_HOST_PASSWORD=env.WEATHER_EMAIL_HOST_PASSWORD
-    )
+
     def test_send_weather_mail(self):
-        feeds = parse_weather_feeds(WEATHER_FEED_URL)
-        msg = make_weather_hazard_message(feeds[0])
-        recipients = get_weather_recipients()
-        event_loop = asyncio.get_event_loop()
-        event_loop.run_until_complete(send_weather_mail(msg, recipients))
+        print(apps.get_app_config('hazard_feed').WEATHER_EMAIL_FROM)
+        print(apps.get_app_config('hazard_feed').WEATHER_EMAIL_SMTP_HOST)
+        # feeds = parse_weather_feeds(WEATHER_FEED_URL)
+        # msg = make_weather_hazard_message(feeds[0])
+        # recipients = get_weather_recipients()
+        # event_loop = asyncio.get_event_loop()
+        # event_loop.run_until_complete(send_weather_mail(msg, recipients))
 

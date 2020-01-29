@@ -24,6 +24,7 @@ class HazardFeeds(models.Model):
     summary = models.TextField()
     date_modified = models.DateTimeField()
     hazard_level = models.ForeignKey(HazardLevels, on_delete=models.CASCADE)
+    is_sent = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _('Hazard Feed')
@@ -34,8 +35,11 @@ class HazardFeeds(models.Model):
         return now-self.date
 
     def is_newer_that(self, timedelta):
-        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        return now-self.date < timedelta
+        return self.date_modified-self.date < timedelta
+
+    @classmethod
+    def not_sent(cls):
+        return cls.objects.filter(is_sent=False)
 
 class WeatherRecipients(models.Model):
     email = models.EmailField()
