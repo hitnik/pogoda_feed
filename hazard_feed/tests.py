@@ -28,11 +28,9 @@ class TestUtils(TestCase):
 
 
     def test_send_weather_mail(self):
-        print(apps.get_app_config('hazard_feed').WEATHER_EMAIL_FROM)
-        print(apps.get_app_config('hazard_feed').WEATHER_EMAIL_SMTP_HOST)
-        # feeds = parse_weather_feeds(WEATHER_FEED_URL)
-        # msg = make_weather_hazard_message(feeds[0])
-        # recipients = get_weather_recipients()
-        # event_loop = asyncio.get_event_loop()
-        # event_loop.run_until_complete(send_weather_mail(msg, recipients))
+        feeds = parse_weather_feeds(WEATHER_FEED_URL)
+        msg = make_weather_hazard_message(feeds[0])
+        recipients = get_weather_recipients()
+        event_loop = asyncio.get_event_loop()
+        event_loop.run_until_complete(send_weather_mail(msg, recipients))
 
