@@ -3,7 +3,6 @@ import os
 import django_rq
 import datetime
 from rq_scheduler import Scheduler
-from .jobs import parse_feeds
 
 class HazardFeedConfig(AppConfig):
     """
@@ -21,6 +20,6 @@ class HazardFeedConfig(AppConfig):
         queue = django_rq.get_queue('default')
         scheduler = Scheduler(queue=queue)
         scheduler.schedule(scheduled_time=datetime.datetime.utcnow()+datetime.timedelta(minutes=2),
-                           func=parse_feeds,
+                           func='hazard_feed.jobs.parse_feeds',
                            interval=60*20
                            )
