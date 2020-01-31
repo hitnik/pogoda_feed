@@ -1,8 +1,6 @@
 from django.apps import AppConfig
 import os
-import django_rq
-import datetime
-from rq_scheduler import Scheduler
+
 
 class HazardFeedConfig(AppConfig):
     """
