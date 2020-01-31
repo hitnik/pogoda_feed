@@ -1,10 +1,14 @@
 from django.core.management.base import BaseCommand
 import django_rq
+from rq import Queue
+from redis import Redis
 import datetime
 from rq_scheduler import Scheduler
 
-queue = django_rq.get_queue('default')
-scheduler = Scheduler(queue=queue)
+redis_conn = Redis('default')
+q = Queue(connection=redis_conn)
+# queue = django_rq.get_queue('default')
+scheduler = Scheduler(queue=q)
 
 def clear_scheduled_jobs():
     # Delete any existing jobs in the scheduler when the app starts up
