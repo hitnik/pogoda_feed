@@ -134,19 +134,19 @@ STATICFILES_DIRS = [
 
 RQ_QUEUES = {
     'default': {
-        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'HOST': os.getenv('REDIS_HOST', 'redis'),
         'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
         'DEFAULT_TIMEOUT': 360,
     },
     'high': {
-        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'HOST': os.getenv('REDIS_HOST', 'redis'),
         'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
     },
     'low': {
-        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'HOST': os.getenv('REDIS_HOST', 'redis'),
         'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
     }
