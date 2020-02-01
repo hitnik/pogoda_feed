@@ -5,7 +5,7 @@ from django.apps import apps
 import asyncio
 import django_rq
 from rq_scheduler import Scheduler
-
+from .jobs import parse_feeds
 
 
 class TestUtils(TestCase):
@@ -36,10 +36,11 @@ class TestUtils(TestCase):
         event_loop = asyncio.get_event_loop()
         event_loop.run_until_complete(send_weather_mail(msg, recipients))
 
-    def test_jog(self):
+    def test_rq(self):
         queue = django_rq.get_queue('default')
-        scheduler = Scheduler(queue=queue)
-        scheduler.schedule(scheduled_time=datetime.datetime.utcnow()+datetime.timedelta(seconds=5),
-                               func='hazard_feed.jobs.parse_feeds',
-                               interval=20
-                               )
+        queue.enqueue(parse_feeds)
+        # scheduler = Scheduler(queue=queue)
+        # scheduler.schedule(scheduled_time=datetime.datetime.utcnow()+datetime.timedelta(seconds=5),
+        #                        func='hazard_feed.jobs.parse_feeds',
+        #                        interval=20
+        #                        )
