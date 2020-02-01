@@ -37,10 +37,11 @@ class TestUtils(TestCase):
         event_loop.run_until_complete(send_weather_mail(msg, recipients))
 
     def test_rq(self):
-        queue = django_rq.get_queue('default')
-        queue.enqueue(parse_feeds)
-        # scheduler = Scheduler(queue=queue)
-        # scheduler.schedule(scheduled_time=datetime.datetime.utcnow()+datetime.timedelta(seconds=5),
-        #                        func='hazard_feed.jobs.parse_feeds',
-        #                        interval=20
-        #                        )
+        # queue = django_rq.get_queue('default')
+        # queue.enqueue(parse_feeds)
+        redis_conn = django_rq.get_connection
+        scheduler = Scheduler(connection=redis_conn)
+        scheduler.schedule(scheduled_time=datetime.datetime.utcnow()+datetime.timedelta(seconds=5),
+                               func='hazard_feed.jobs.parse_feeds',
+                               interval=20
+                               )
