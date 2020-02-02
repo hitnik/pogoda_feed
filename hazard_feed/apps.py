@@ -2,6 +2,7 @@ from django.apps import AppConfig
 import os
 import django_rq
 from rq_scheduler import Scheduler
+import datetime
 
 
 class HazardFeedConfig(AppConfig):
@@ -20,6 +21,6 @@ class HazardFeedConfig(AppConfig):
         redis_conn = django_rq.get_connection
         scheduler = Scheduler(connection=redis_conn)
         scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
-                           func=parse_feeds,
+                           func='hazard_feed.jobs.parse_feeds',
                            interval=20
                            )
