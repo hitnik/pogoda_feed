@@ -16,17 +16,10 @@ def parse_feeds():
         put_feed_to_db()
     print('ok')
 
+
 @job
-def send_weather_mail():
+def send_weather_mail(feed):
     recipients = get_weather_recipients()
-    feeds = HazardFeeds.not_sent()
-    msg = make_weather_hazard_message(feeds[0])
+    msg = make_weather_hazard_message(feed)
     event_loop = asyncio.get_event_loop()
     event_loop.run_until_complete(send_weather_mail(msg, recipients))
-    # for feed in feeds:
-    #     put_result = put_feed_to_db(feed)
-    #     if put_result and \
-    #             (
-    #                     feed.date.date() == feed.date_modified.date() or
-    #                     feed.is_newer_that(datetime.timedelta(hours=1))
-    #             ):

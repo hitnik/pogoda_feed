@@ -10,6 +10,7 @@ from django.template import loader
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
 from django.apps import apps
+from django.db.utils import OperationalError
 
 def hazard_level_in_text_find(text):
     """
@@ -17,9 +18,12 @@ def hazard_level_in_text_find(text):
     :param text:
     :return:
     """
-    for hazard in HazardLevels.objects.all():
-        if re.search(hazard.title, text):
-            return hazard
+    try:
+        for hazard in HazardLevels.objects.all():
+            if re.search(hazard.title, text):
+                return hazard
+    except OperationalError:
+        return None
     return None
 
 def parse_weather_feeds(url):
@@ -43,12 +47,17 @@ def parse_weather_feeds(url):
                 is_sent=False
             )
             feeds_out.append(hazard_feed)
+        else:
+            raise Exception('harard level define error')
     return feeds_out
 
 def put_feed_to_db(feed):
-    if not HazardFeeds.objects.filter(id=feed.id).exists():
-        feed.save()
-        return True
+    try:
+        if not HazardFeeds.objects.filter(id=feed.id).exists():
+            feed.save()
+            return True
+    except OperationalError:
+        return False
     return False
 
 def make_weather_hazard_message(feed):

@@ -6,14 +6,17 @@ import asyncio
 import django_rq
 from rq_scheduler import Scheduler
 from .jobs import parse_feeds
+from .models import WeatherRecipients
 
 
-class TestUtils(TestCase):
+class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
 
     def setUp(self):
-        feeds = parse_weather_feeds(WEATHER_FEED_URL)
-        feeds[0].save()
+        # feeds = parse_weather_feeds(WEATHER_FEED_URL)
+        # feeds[0].save()
+        WeatherRecipients.objects.create('odotest@mck.beltelecom.by', is_active=True)
+        WeatherRecipients.objects.create('omc@main.beltelecom.by', is_active=True)
 
     def test_put_feed_to_db(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
@@ -45,3 +48,6 @@ class TestUtils(TestCase):
                                func=parse_feeds,
                                interval=20
                                )
+
+    def test_s(self):
+        pass
