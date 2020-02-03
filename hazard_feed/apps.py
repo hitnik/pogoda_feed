@@ -21,7 +21,7 @@ class HazardFeedConfig(AppConfig):
     def ready(self):
         from .models import HazardFeeds
         from .signals import send_hazard_feed_notification
-        post_save.connect(send_hazard_feed_notification(), sender=HazardFeeds)
+        post_save.connect(send_hazard_feed_notification, sender=HazardFeeds)
 
         from . import jobs
         scheduler = django_rq.get_scheduler('default')
