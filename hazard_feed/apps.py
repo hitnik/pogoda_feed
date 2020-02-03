@@ -3,7 +3,7 @@ import os
 import django_rq
 from rq_scheduler import Scheduler
 import datetime
-from .jobs import parse_feeds
+
 
 
 class HazardFeedConfig(AppConfig):
@@ -19,6 +19,7 @@ class HazardFeedConfig(AppConfig):
     WEATHER_EMAIL_HOST_PASSWORD = os.getenv('WEATHER_EMAIL_HOST_PASSWORD')
 
     def ready(self):
+        from .jobs import parse_feeds
         redis_conn = django_rq.get_connection
         scheduler = Scheduler(connection=redis_conn)
         scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
