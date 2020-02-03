@@ -20,8 +20,7 @@ class HazardFeedConfig(AppConfig):
 
     def ready(self):
         from .jobs import parse_feeds
-        redis_conn = django_rq.get_connection
-        scheduler = Scheduler(connection=redis_conn)
+        scheduler = django_rq.get_scheduler('default')
         scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
                            func=parse_feeds,
                            interval=20
