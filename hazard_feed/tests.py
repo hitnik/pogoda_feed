@@ -7,6 +7,7 @@ import django_rq
 from rq_scheduler import Scheduler
 from .jobs import parse_feeds
 from .models import WeatherRecipients
+import time
 
 
 class TestHazardFeeds(TestCase):
@@ -50,4 +51,4 @@ class TestHazardFeeds(TestCase):
                                )
 
     def test_s(self):
-        pass
+        time.sleep(10)
