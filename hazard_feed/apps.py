@@ -18,9 +18,9 @@ class HazardFeedConfig(AppConfig):
     WEATHER_EMAIL_HOST_PASSWORD = os.getenv('WEATHER_EMAIL_HOST_PASSWORD')
 
     def ready(self):
-        from .jobs import parse_feeds
+        from . import jobs
         scheduler = django_rq.get_scheduler('default')
         scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
-                           func=self.jobs.parse_feeds,
+                           func=jobs.parse_feeds,
                            interval=20
                            )
