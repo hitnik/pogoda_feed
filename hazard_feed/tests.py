@@ -15,8 +15,8 @@ class TestHazardFeeds(TestCase):
     def setUp(self):
         # feeds = parse_weather_feeds(WEATHER_FEED_URL)
         # feeds[0].save()
-        WeatherRecipients.objects.create('odotest@mck.beltelecom.by', is_active=True)
-        WeatherRecipients.objects.create('omc@main.beltelecom.by', is_active=True)
+        WeatherRecipients.objects.create(email='odotest@mck.beltelecom.by', is_active=True)
+        WeatherRecipients.objects.create(email='omc@main.beltelecom.by', is_active=True)
 
     def test_put_feed_to_db(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
