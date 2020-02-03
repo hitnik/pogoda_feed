@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 import os
 import django_rq
 import datetime
+from redis.exceptions import ConnectionError
 
 
 
