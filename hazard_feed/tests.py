@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from .utils import *
 from .config import WEATHER_FEED_URL
 from django.apps import apps
@@ -14,9 +14,7 @@ class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
 
     def setUp(self):
-        feeds = parse_weather_feeds(WEATHER_FEED_URL)
-        feeds[0].save()
-
+        pass
 
     def test_put_feed_to_db(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
@@ -48,5 +46,18 @@ class TestHazardFeeds(TestCase):
                                func=parse_feeds,
                                interval=60
                                )
-    def test_s(self):
-        time.sleep(10)
+    def test_notify_signal(self):
+        feed = HazardFeeds.objects.create(
+            id=1580800025,
+            date=datetime.datetime.utcnow(),
+            date_modified=datetime.datetime.utcnow()+datetime.timedelta(minutes=5),
+            title='Предупреждение о неблагоприятном явлении',
+            link='http://www.pogoda.by/news/?page=34647',
+            summary='Желтый уровень опасности. 5 февраля (среда) на '
+                    'отдельных участках дорог республики ожидается гололедица.',
+            hazard_level=HazardLevels.objects.get(id=3),
+            is_sent=False
+        )
+        self.assertTrue(feed.is_sent)
+        print(feed.date_created)
+        print(feed.date_modified)

@@ -38,13 +38,13 @@ def parse_weather_feeds(url):
     for feed in feeds.entries:
         ms = int(time.mktime(feed.published_parsed))
         date = datetime.datetime.fromtimestamp(ms).replace(tzinfo=pytz.utc)
-        date_parsed = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        # date_parsed = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         hazard_level = hazard_level_in_text_find(feed.summary)
         if hazard_level:
             hazard_feed = HazardFeeds(
                 id=feed.id, date=date, title=feed.title,
                 link=feed.link, summary=feed.summary,
-                date_modified=date_parsed, hazard_level=hazard_level,
+                hazard_level=hazard_level,
                 is_sent=False
             )
             feeds_out.append(hazard_feed)
