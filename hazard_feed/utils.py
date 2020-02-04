@@ -90,7 +90,7 @@ async def send_weather_mail(msg, recipients):
     :return:
     """
     config = apps.get_app_config('hazard_feed')
-
+    print(config.WEATHER_USE_TSL)
     if config.WEATHER_USE_TSL:
         print(True)
         await aiosmtplib.send(
