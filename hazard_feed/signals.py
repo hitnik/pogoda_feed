@@ -6,6 +6,7 @@ import django_rq
 from .jobs import send_weather_mail
 
 def send_hazard_feed_notification(sender, instance, created, **kwargs):
+    print('signal')
     if created \
             and not instance.is_sent:
             # and (

@@ -47,8 +47,7 @@ class TestHazardFeeds(TestCase):
         scheduler = Scheduler(connection=redis_conn)
         scheduler.schedule(scheduled_time=datetime.datetime.utcnow()+datetime.timedelta(seconds=5),
                                func=parse_feeds,
-                               interval=20
+                               interval=60
                                )
-
     def test_s(self):
         time.sleep(10)
