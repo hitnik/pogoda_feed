@@ -90,6 +90,7 @@ async def send_weather_mail(msg, recipients):
     :return:
     """
     config = apps.get_app_config('hazard_feed')
+    print(config.WEATHER_USE_TSL)
     if config.WEATHER_USE_TSL:
         await aiosmtplib.send(
             msg,
@@ -106,7 +107,7 @@ async def send_weather_mail(msg, recipients):
             msg,
             hostname=config.WEATHER_EMAIL_SMTP_HOST,
             port=config.WEATHER_EMAIL_SMTP_PORT,
-            start_tls=config.WEATHER_USE_TSL,
+            start_tls=True,
             username=config.WEATHER_EMAIL_HOST_USER,
             password=config.WEATHER_EMAIL_HOST_PASSWORD,
             sender=settings.WEATHER_EMAIL_FROM,
