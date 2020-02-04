@@ -1,8 +1,6 @@
 from django_rq import job
 from .config import WEATHER_FEED_URL
 import asyncio
-import datetime
-from .models import HazardFeeds
 from hazard_feed.utils import (
     parse_weather_feeds, put_feed_to_db,
     make_weather_hazard_message, send_weather_mail,
