@@ -1,5 +1,6 @@
 import datetime
 import pytz
+import uuid
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.utils.translation import gettext_lazy as _
@@ -55,6 +56,7 @@ class HazardFeeds(TimeStampBase):
 class WeatherRecipients(models.Model):
     email = models.EmailField()
     title = models.CharField(max_length=64, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=False)
 
     class Meta:
