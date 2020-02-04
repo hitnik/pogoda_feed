@@ -99,7 +99,7 @@ async def send_weather_mail(msg, recipients):
         use_tls=config.WEATHER_USE_TSL,
         username=config.WEATHER_EMAIL_HOST_USER,
         password=config.WEATHER_EMAIL_HOST_PASSWORD,
-        sender=config.WEATHER_EMAIL_FROM,
+        sender=settings.WEATHER_EMAIL_FROM,
         recipients=recipients
     )
 
