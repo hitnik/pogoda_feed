@@ -12,7 +12,6 @@ def parse_feeds():
     feeds = parse_weather_feeds(WEATHER_FEED_URL)
     for feed in feeds:
         put_feed_to_db(feed)
-    print('ok')
 
 
 @job

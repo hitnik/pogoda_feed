@@ -14,10 +14,9 @@ class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
 
     def setUp(self):
-        # feeds = parse_weather_feeds(WEATHER_FEED_URL)
-        # feeds[0].save()
-        WeatherRecipients.objects.create(email='odotest@mck.beltelecom.by', is_active=True)
-        WeatherRecipients.objects.create(email='omc@main.beltelecom.by', is_active=True)
+        feeds = parse_weather_feeds(WEATHER_FEED_URL)
+        feeds[0].save()
+
 
     def test_put_feed_to_db(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
