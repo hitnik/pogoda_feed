@@ -153,7 +153,7 @@ RQ_QUEUES = {
 }
 
 # email from for snding weather email
-WEATHER_EMAIL_FROM = 'telex@mck.beltelecom.by'
+WEATHER_EMAIL_FROM = 'Telex OMC <telex@mck.beltelecom.by>'
 
 # WEATHER_EMAIL_SMTP_HOST = os.getenv('EMAIL_SMTP_HOST')
 # WEATHER_EMAIL_IMAP_HOST = os.getenv('EMAIL_IMAP_HOST')
