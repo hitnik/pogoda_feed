@@ -13,7 +13,7 @@ class HazardFeedConfig(AppConfig):
     """
     name = 'hazard_feed'
     WEATHER_EMAIL_SMTP_HOST = os.getenv('EMAIL_WEATHER_SMTP_HOST')
-    WEATHER_USE_TSL = bool(os.getenv('WEATHER_USE_TSL', 0))
+    WEATHER_USE_TSL = int(os.getenv('WEATHER_USE_TSL', 0))
     WEATHER_EMAIL_SMTP_PORT = os.getenv('WEATHER_EMAIL_SMTP_PORT')
     WEATHER_EMAIL_HOST_USER = os.getenv('WEATHER_EMAIL_HOST_USER')
     WEATHER_EMAIL_HOST_PASSWORD = os.getenv('WEATHER_EMAIL_HOST_PASSWORD')

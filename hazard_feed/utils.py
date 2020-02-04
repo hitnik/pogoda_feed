@@ -11,6 +11,7 @@ from email.message import EmailMessage
 from bs4 import BeautifulSoup
 from django.apps import apps
 from django.db.utils import OperationalError
+import os
 
 def hazard_level_in_text_find(text):
     """
