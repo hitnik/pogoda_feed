@@ -152,14 +152,6 @@ RQ_QUEUES = {
     }
 }
 
-# email from for snding weather email
-
-WEATHER_EMAIL_FROM = 'Telex OMC <telex@mck.beltelecom.by>'
+# email settings from for sending weather email
 
 
-# WEATHER_EMAIL_IMAP_HOST = os.getenv('EMAIL_IMAP_HOST')
-# WEATHER_USE_TSL = os.getenv('USE_TSL')
-# WEATHER_EMAIL_SMTP_PORT = os.getenv('EMAIL_SMTP_PORT')
-# WEATHER_EMAIL_IMAP_PORT = os.getenv('EMAIL_IMAP_PORT')
-# WEATHER_EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-# WEATHER_EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')

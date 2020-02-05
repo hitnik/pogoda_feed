@@ -26,7 +26,7 @@ class HazardFeedConfig(AppConfig):
             self.WEATHER_EMAIL_SMTP_HOST = settings.WEATHER_EMAIL_SMTP_HOST
         if hasattr(settings, 'WEATHER_USE_TSL'):
             self.WEATHER_USE_TSL = int(settings.WEATHER_USE_TSL)
-        if hasattr(settings, 'WEATHER_EMAIL_SMTP_PORT '):
+        if hasattr(settings, 'WEATHER_EMAIL_SMTP_PORT'):
             self.WEATHER_EMAIL_SMTP_PORT = settings.WEATHER_EMAIL_SMTP_PORT
         if hasattr(settings, 'WEATHER_EMAIL_HOST_USER'):
             self.WEATHER_EMAIL_HOST_USER = settings.WEATHER_EMAIL_HOST_USER
