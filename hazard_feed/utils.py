@@ -68,6 +68,7 @@ def make_weather_hazard_message(feed):
     template = loader.get_template('hazard_feed/weather_mail.html')
     context = {'date': date, 'feed': feed}
     html = template.render(context)
+    t = loader.render_to_string('hazard_feed/weather_mail.html', context)
     soup = BeautifulSoup(html, 'html.parser')
     text = soup.get_text()
     msg = EmailMessage()
