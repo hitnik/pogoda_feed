@@ -61,3 +61,4 @@ class TestHazardFeeds(TestCase):
         self.assertTrue(feed.is_sent)
         print(feed.date_created)
         print(feed.date_modified)
+
