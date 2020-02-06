@@ -49,7 +49,7 @@ def parse_weather_feeds(url):
             )
             feeds_out.append(hazard_feed)
         else:
-            raise Exception('harard level define error')
+            raise Exception('Hazard level define error')
     return feeds_out
 
 def put_feed_to_db(feed):
