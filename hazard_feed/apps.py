@@ -38,11 +38,11 @@ class HazardFeedConfig(AppConfig):
         post_save.connect(send_hazard_feed_notification, sender=HazardFeeds)
         from . import jobs
 
-        try:
-            scheduler = django_rq.get_scheduler('default')
-            scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
-                               func=jobs.parse_feeds,
-                               interval=600
-                               )
-        except ConnectionError:
-            pass
+        # try:
+        #     scheduler = django_rq.get_scheduler('default')
+        #     scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
+        #                        func=jobs.parse_feeds,
+        #                        interval=600
+        #                        )
+        # except ConnectionError:
+        #     pass
