@@ -42,7 +42,7 @@ class HazardFeedConfig(AppConfig):
             scheduler = django_rq.get_scheduler('default')
             scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
                                func=jobs.parse_feeds,
-                               interval=600
+                               interval=6000
                                )
         except ConnectionError:
             pass
