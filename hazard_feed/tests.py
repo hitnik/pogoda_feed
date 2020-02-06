@@ -62,3 +62,5 @@ class TestHazardFeeds(TestCase):
         print(feed.date_created)
         print(feed.date_modified)
 
+    def test_recipient(self):
+        self.assertIsInstance(get_weather_recipients(), list)
