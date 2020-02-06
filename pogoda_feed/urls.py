@@ -20,6 +20,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
+# adding django_rq urls
 urlpatterns += [
     path('django-rq/', include('django_rq.urls'))
+]
+
+#adding tinyMCE urls
+urlpatterns += [
+    path('tinymce/', include('tinymce.urls')),
 ]
