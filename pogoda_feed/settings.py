@@ -153,6 +153,6 @@ RQ_QUEUES = {
 }
 
 # email settings from for sending weather email
-
+WEATHER_EMAIL_FROM = 'Telex OMC <telex@mck.beltelecom.by>'
 
 
