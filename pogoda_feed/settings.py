@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_rq',
     'tinymce',
-    'scheduler',
     'hazard_feed',
 ]
 
@@ -127,7 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(BASE_DIR , 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATICFILES_DIRS = (
 #   os.path.join(BASE_DIR, 'static'),
 # )
@@ -157,3 +156,7 @@ RQ_QUEUES = {
 WEATHER_EMAIL_FROM = 'Telex OMC <telex@mck.beltelecom.by>'
 
 
+TINYMCE_JS_URL = STATIC_URL + 'hazard_feed/static/js/tinymce/tinymce.min.js'
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': "silver",
+}
