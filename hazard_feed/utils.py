@@ -3,15 +3,18 @@ import feedparser
 import time
 import datetime
 import pytz
-from .models import HazardLevels, HazardFeeds, WeatherRecipients
+from .models import (
+    HazardLevels, HazardFeeds,
+    WeatherRecipients, EmailTemplates
+)
 from django.conf import settings
 import aiosmtplib
 from django.template import loader
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
 from django.apps import apps
+from django.template import Context, Template
 from django.db.utils import OperationalError
-import os
 
 def hazard_level_in_text_find(text):
     """
@@ -65,8 +68,8 @@ def make_weather_hazard_message(feed):
     date = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     local_tz = pytz.timezone(settings.TIME_ZONE)
     date = date.astimezone(local_tz)
-    template = loader.get_template('hazard_feed/weather_mail.html')
-    context = {'date': date, 'feed': feed}
+    template = Template(EmailTemplates.objects.get(title='weather_mail').template)
+    context = Context({'date': date, 'feed': feed})
     html = template.render(context)
     soup = BeautifulSoup(html, 'html.parser')
     text = soup.get_text()

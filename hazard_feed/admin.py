@@ -18,4 +18,5 @@ class WeatherRecipientsAdmin(admin.ModelAdmin):
 
 @admin.register(EmailTemplates)
 class EmailTemplateAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = (['title'])
+
