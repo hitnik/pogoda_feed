@@ -16,3 +16,4 @@ rq-scheduler==0.9.1
 six==1.14.0
 soupsieve==1.9.5
 sqlparse==0.3.0
+psycopg2
