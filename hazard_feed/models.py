@@ -14,6 +14,16 @@ class TimeStampBase(models.Model):
     class Meta:
         abstract = True
 
+class RSSFeedUrl(TimeStampBase):
+    title = models.CharField(max_length=32)
+    url = models.URLField()
+    is_active = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _('RSS feed URL')
+        verbose_name_plural = _('RSS feed URLs ')
+
+
 class HazardLevels(models.Model):
     title = models.CharField(max_length=32)
     danger_level = models.IntegerField(validators=[MaxValueValidator(10)])

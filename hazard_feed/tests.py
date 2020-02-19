@@ -79,3 +79,6 @@ class TestHazardFeeds(TestCase):
         )
         msg = make_weather_hazard_message(feed)
         print(msg.get_payload()[0])
+
+    def test_url_not_rss(self):
+       print(len(parse_weather_feeds('sfsdf','http://tut.by')))

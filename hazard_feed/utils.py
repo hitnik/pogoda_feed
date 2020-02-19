@@ -15,6 +15,9 @@ from bs4 import BeautifulSoup
 from django.apps import apps
 from django.template import Context, Template
 from django.db.utils import OperationalError
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 
 def hazard_level_in_text_find(text):
     """
@@ -30,30 +33,38 @@ def hazard_level_in_text_find(text):
         return None
     return None
 
-def parse_weather_feeds(url):
+def parse_weather_feeds(*args):
     """
     parse weather hazard rss to django model
     :param url:url of weather page
     :return:
     """
-    feeds = feedparser.parse(url)
-    feeds_out = []
-    for feed in feeds.entries:
-        ms = int(time.mktime(feed.published_parsed))
-        date = datetime.datetime.fromtimestamp(ms).replace(tzinfo=pytz.utc)
-        # date_parsed = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        hazard_level = hazard_level_in_text_find(feed.summary)
-        if hazard_level:
-            hazard_feed = HazardFeeds(
-                id=feed.id, date=date, title=feed.title,
-                link=feed.link, summary=feed.summary,
-                hazard_level=hazard_level,
-                is_sent=False
-            )
-            feeds_out.append(hazard_feed)
-        else:
-            raise Exception('Hazard level define error')
-    return feeds_out
+    validator = URLValidator()
+    for entry in args:
+        if isinstance(entry, str):
+            try:
+                validator(entry)
+            except ValidationError as e:
+                print(e)
+                print('--'+entry+'--  not a url')
+    # feeds = feedparser.parse(url)
+    # feeds_out = []
+    # for feed in feeds.entries:
+    #     ms = int(time.mktime(feed.published_parsed))
+    #     date = datetime.datetime.fromtimestamp(ms).replace(tzinfo=pytz.utc)
+    #     # date_parsed = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    #     hazard_level = hazard_level_in_text_find(feed.summary)
+    #     if hazard_level:
+    #         hazard_feed = HazardFeeds(
+    #             id=feed.id, date=date, title=feed.title,
+    #             link=feed.link, summary=feed.summary,
+    #             hazard_level=hazard_level,
+    #             is_sent=False
+    #         )
+    #         feeds_out.append(hazard_feed)
+    #     else:
+    #         raise Exception('Hazard level define error')
+    # return feeds_out
 
 def put_feed_to_db(feed):
     try:
