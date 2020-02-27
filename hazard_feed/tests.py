@@ -66,6 +66,7 @@ class TestHazardFeeds(TestCase):
         self.assertIsInstance(get_weather_recipients(), list)
 
     def test_templated_msg(self):
+        WeatherRecipients.objects.create(title='omc', email='omc@main.belteleocm.by', is_active=True)
         feed = HazardFeeds(
             id=1580800025,
             date=datetime.datetime.utcnow(),
@@ -78,7 +79,8 @@ class TestHazardFeeds(TestCase):
             is_sent=False
         )
         feed.save()
-        WeatherRecipients.objects.create()
+
+
 
     def test_url_not_rss(self):
        print(len(parse_weather_feeds('sfsdf','http://tut.by')))
