@@ -5,7 +5,8 @@ import datetime
 import pytz
 from .models import (
     HazardLevels, HazardFeeds,
-    WeatherRecipients, EmailTemplates
+    WeatherRecipients, EmailTemplates,
+    RSSFeedUrl
 )
 from django.conf import settings
 import aiosmtplib
@@ -17,7 +18,7 @@ from django.template import Context, Template
 from django.db.utils import OperationalError
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-
+from .config import WEATHER_FEED_URL
 
 def hazard_level_in_text_find(text):
     """
@@ -33,6 +34,14 @@ def hazard_level_in_text_find(text):
         return None
     return None
 
+
+def create_rss_urls_list():
+    urls = list(RSSFeedUrl.objects.filter(is_active=True).values_list('url', flat=True))
+    if len(urls) == 0:
+        urls.append(WEATHER_FEED_URL)
+    return urls
+
+
 def parse_weather_feeds(*args):
     """
     parse weather hazard rss to django model
@@ -40,31 +49,32 @@ def parse_weather_feeds(*args):
     :return:
     """
     validator = URLValidator()
+    feeds_out = []
     for entry in args:
         if isinstance(entry, str):
             try:
                 validator(entry)
+                url = entry
+                feeds = feedparser.parse(url)
+                for feed in feeds.entries:
+                    ms = int(time.mktime(feed.published_parsed))
+                    date = datetime.datetime.fromtimestamp(ms).replace(tzinfo=pytz.utc)
+                    hazard_level = hazard_level_in_text_find(feed.summary)
+                    if hazard_level:
+                        hazard_feed = HazardFeeds(
+                            id=feed.id, date=date, title=feed.title,
+                            link=feed.link, summary=feed.summary,
+                            hazard_level=hazard_level,
+                            is_sent=False
+                        )
+                        feeds_out.append(hazard_feed)
+                    else:
+                        raise Exception('Hazard level define error')
             except ValidationError as e:
                 print(e)
                 print('--'+entry+'--  not a url')
-    # feeds = feedparser.parse(url)
-    # feeds_out = []
-    # for feed in feeds.entries:
-    #     ms = int(time.mktime(feed.published_parsed))
-    #     date = datetime.datetime.fromtimestamp(ms).replace(tzinfo=pytz.utc)
-    #     # date_parsed = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-    #     hazard_level = hazard_level_in_text_find(feed.summary)
-    #     if hazard_level:
-    #         hazard_feed = HazardFeeds(
-    #             id=feed.id, date=date, title=feed.title,
-    #             link=feed.link, summary=feed.summary,
-    #             hazard_level=hazard_level,
-    #             is_sent=False
-    #         )
-    #         feeds_out.append(hazard_feed)
-    #     else:
-    #         raise Exception('Hazard level define error')
-    # return feeds_out
+
+    return feeds_out
 
 def put_feed_to_db(feed):
     try:
@@ -90,6 +100,8 @@ def make_weather_hazard_message(feed):
     msg.set_content(text)
     msg.add_alternative(html, subtype='html')
     return msg
+
+
 
 def get_weather_recipients():
     return list(WeatherRecipients.objects.filter(is_active=True).values_list('email', flat=True))

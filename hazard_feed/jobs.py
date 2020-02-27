@@ -1,16 +1,16 @@
 from django_rq import job
-from .config import WEATHER_FEED_URL
 import asyncio
 from hazard_feed.utils import (
     parse_weather_feeds, put_feed_to_db,
     make_weather_hazard_message, send_weather_mail,
-    get_weather_recipients
+    get_weather_recipients, create_rss_urls_list
     )
 
 @job
 def parse_feeds():
 
-    feeds = parse_weather_feeds(WEATHER_FEED_URL)
+    urls_list =create_rss_urls_list()
+    feeds = parse_weather_feeds(*urls_list)
     for feed in feeds:
         put_feed_to_db(feed)
 

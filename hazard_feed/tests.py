@@ -77,8 +77,16 @@ class TestHazardFeeds(TestCase):
             hazard_level=HazardLevels.objects.get(id=3),
             is_sent=False
         )
-        msg = make_weather_hazard_message(feed)
-        print(msg.get_payload()[0])
+        feed.save()
+        WeatherRecipients.objects.create()
 
     def test_url_not_rss(self):
        print(len(parse_weather_feeds('sfsdf','http://tut.by')))
+
+
+    def test_parse(self):
+        list = create_rss_urls_list()
+        print(list)
+        feeds = parse_weather_feeds(*list)
+        print(feeds)
+
