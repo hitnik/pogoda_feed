@@ -66,7 +66,7 @@ class TestHazardFeeds(TestCase):
         self.assertIsInstance(get_weather_recipients(), list)
 
     def test_templated_msg(self):
-        WeatherRecipients.objects.create(title='omc', email='omc@main.belteleocm.by', is_active=True)
+        WeatherRecipients.objects.create(title='omc', email='omc@main.beltelecom.by', is_active=True)
         feed = HazardFeeds(
             id=1580800025,
             date=datetime.datetime.utcnow(),
