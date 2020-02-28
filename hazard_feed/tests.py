@@ -66,19 +66,7 @@ class TestHazardFeeds(TestCase):
         self.assertIsInstance(get_weather_recipients(), list)
 
     def test_templated_msg(self):
-        WeatherRecipients.objects.create(title='omc', email='omc@main.beltelecom.by', is_active=True)
-        feed = HazardFeeds(
-            id=1580800025,
-            date=datetime.datetime.utcnow(),
-            date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
-            title='Предупреждение о неблагоприятном явлении',
-            link='http://www.pogoda.by/news/?page=34647',
-            summary='Желтый уровень опасности. 5 февраля (среда) на '
-                    'отдельных участках дорог республики ожидается гололедица.',
-            hazard_level=HazardLevels.objects.get(id=3),
-            is_sent=False
-        )
-        feed.save()
+        pass
 
 
 
