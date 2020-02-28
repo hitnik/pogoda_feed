@@ -66,8 +66,18 @@ class TestHazardFeeds(TestCase):
         self.assertIsInstance(get_weather_recipients(), list)
 
     def test_templated_msg(self):
-        pass
-
+        feed = HazardFeeds(
+            id=1580800025,
+            date=datetime.datetime.utcnow(),
+            date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
+            title='Предупреждение о неблагоприятном явлении',
+            link='http://www.pogoda.by/news/?page=34647',
+            summary='Желтый уровень опасности. 5 февраля (среда) на '
+                    'отдельных участках дорог республики ожидается гололедица.',
+            hazard_level=HazardLevels.objects.get(id=3),
+            is_sent=False
+        )
+        feed.save()
 
 
     def test_url_not_rss(self):
