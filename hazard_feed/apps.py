@@ -41,7 +41,7 @@ class HazardFeedConfig(AppConfig):
         try:
             scheduler = django_rq.get_scheduler('default')
             for job in scheduler.get_jobs():
-                job.delete()
+                print(job.func_name)
             scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
                                func=jobs.parse_feeds,
                                interval=600

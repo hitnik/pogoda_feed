@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_rq',
     'tinymce',
+    'rest_framework',
     'hazard_feed',
 ]
 

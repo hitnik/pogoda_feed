@@ -1,6 +1,6 @@
 import datetime
 import django_rq
-from .jobs import send_notification
+from .jobs import send_weather_notification
 from redis.exceptions import ConnectionError
 
 def send_hazard_feed_notification(sender, instance, created, **kwargs):
@@ -11,7 +11,7 @@ def send_hazard_feed_notification(sender, instance, created, **kwargs):
             ):
         try:
             queue = django_rq.get_queue()
-            queue.enqueue(send_notification, instance)
+            queue.enqueue(send_weather_notification, instance)
             instance.date_send_set()
             instance.is_sent = True
             instance.save()

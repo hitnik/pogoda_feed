@@ -107,8 +107,7 @@ def get_weather_recipients():
     return list(WeatherRecipients.objects.filter(is_active=True).values_list('email', flat=True))
 
 
-
-async def send_weather_mail(msg, recipients):
+async def send_mail(msg, recipients):
 
     """
     try to get queryset with async

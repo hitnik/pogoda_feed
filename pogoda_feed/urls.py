@@ -29,3 +29,8 @@ urlpatterns += [
 urlpatterns += [
     path('tinymce/', include('tinymce.urls')),
 ]
+
+#adding hazard_fedd urls
+urlpatterns += [
+    path('hazard/', include('hazard_feed.urls')),
+]
