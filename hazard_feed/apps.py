@@ -13,7 +13,7 @@ class HazardFeedConfig(AppConfig):
      app settings. You must specify settings in your environment
     """
     name = 'hazard_feed'
-    WEATHER_EMAIL_SMTP_HOST = os.getenv('EMAIL_WEATHER_SMTP_HOST')
+    WEATHER_EMAIL_SMTP_HOST = os.getenv('WEATHER_EMAIL_SMTP_HOST')
     WEATHER_USE_TSL = int(os.getenv('WEATHER_USE_TSL', 0))
     WEATHER_EMAIL_SMTP_PORT = os.getenv('WEATHER_EMAIL_SMTP_PORT')
     WEATHER_EMAIL_HOST_USER = os.getenv('WEATHER_EMAIL_HOST_USER')
@@ -41,7 +41,8 @@ class HazardFeedConfig(AppConfig):
         try:
             scheduler = django_rq.get_scheduler('default')
             for job in scheduler.get_jobs():
-                print(job.func_name)
+                if job.func_name == 'hazard_feed.jobs.parse_feeds':
+                    job.delete()
             scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
                                func=jobs.parse_feeds,
                                interval=600

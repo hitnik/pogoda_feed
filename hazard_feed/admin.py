@@ -37,7 +37,7 @@ class HazardLevelsAdmin(admin.ModelAdmin):
 
 @admin.register(HazardFeeds)
 class HazardFeedsAdmin(admin.ModelAdmin):
-    pass
+    list_display = [field.name for field in HazardFeeds._meta.get_fields()]
 
 @admin.register(WeatherRecipients)
 class WeatherRecipientsAdmin(BaseEnadledDisabledModelAdmin):

@@ -19,6 +19,9 @@ class RSSFeedUrl(TimeStampBase):
     url = models.URLField()
     is_active = models.BooleanField(default=False)
 
+    def __str__(self):
+        return '%s' % self.title
+
     class Meta:
         verbose_name = _('RSS feed URL')
         verbose_name_plural = _('RSS feed URLs ')
@@ -29,6 +32,9 @@ class HazardLevels(models.Model):
     danger_level = models.IntegerField(validators=[MaxValueValidator(10)])
     color_code = models.CharField(max_length=6, null=True)
     description = models.TextField()
+
+    def __str__(self):
+        return '%s' % self.title
 
     class Meta:
         verbose_name = _('Hazard Level')
@@ -43,6 +49,9 @@ class HazardFeeds(TimeStampBase):
     hazard_level = models.ForeignKey(HazardLevels, on_delete=models.CASCADE)
     is_sent = models.BooleanField(default=False)
     date_send = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return '%s' % self.title
 
     class Meta:
         verbose_name = _('Hazard Feed')
@@ -64,11 +73,14 @@ class HazardFeeds(TimeStampBase):
 
 
 
-class WeatherRecipients(TimeStampBase):
-    email = models.EmailField(unique=True)
+class WeatherRecipients(models.Model):
+    email = models.EmailField()
     title = models.CharField(max_length=64, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '%s' % self.title
 
     class Meta:
         verbose_name = _('Weather hazard recipient')
@@ -77,6 +89,9 @@ class WeatherRecipients(TimeStampBase):
 class EmailTemplates(models.Model):
     title = models.CharField(max_length=64, editable=False, unique=True)
     template = HTMLField(null=True)
+
+    def __str__(self):
+        return '%s' % self.title
 
     class Meta:
         verbose_name = _('Email Template')
