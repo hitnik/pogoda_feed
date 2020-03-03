@@ -7,8 +7,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
-    serializer_class = WeaWeatherRecipientsMailTitleSerializer
-
+    serializer_class = WeatherRecipientsMailTitleSerializer
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
@@ -16,7 +15,11 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
             if 'email' in codes:
                 if 'unique' in codes['email']:
                     serializer = self.get_serializer()
-                    self.perform_create(serializer, exists=True)
+                    email = self.get_serializer_context()['request'].POST.get('email')
+                    title = self.get_serializer_context()['request'].POST.get('title')
+                    model = getattr(serializer.Meta, 'model')
+                    obj = model.objects.get(email=email)
+                    obj.save()
                     return Response({}, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
@@ -26,8 +29,3 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         response.data = {}
         return response
 
-    def perform_create(self, serializer, exists=False):
-        if not exists:
-            super().perform_create(serializer)
-        else:
-            pass

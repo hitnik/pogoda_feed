@@ -17,3 +17,4 @@ def send_hazard_feed_notification(sender, instance, created, **kwargs):
             instance.save()
         except ConnectionError:
             pass
+

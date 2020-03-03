@@ -6,7 +6,7 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
         model = WeatherRecipients
         fields = ['email']
 
-class WeaWeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
+class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherRecipients
         fields = ['email', 'title']

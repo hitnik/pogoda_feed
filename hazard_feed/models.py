@@ -74,7 +74,7 @@ class HazardFeeds(TimeStampBase):
 
 
 class WeatherRecipients(models.Model):
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     title = models.CharField(max_length=64, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=False)
