@@ -19,7 +19,6 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                     title = self.get_serializer_context()['request'].POST.get('title')
                     model = getattr(serializer.Meta, 'model')
                     obj = model.objects.get(email=email)
-                    obj.save()
                     return Response({}, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
@@ -28,4 +27,6 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         response.status_code = status.HTTP_200_OK
         response.data = {}
         return response
+
+class ActivateSubscribe(APIView):
 

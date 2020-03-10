@@ -96,3 +96,14 @@ class EmailTemplates(models.Model):
     class Meta:
         verbose_name = _('Email Template')
         verbose_name_plural = _('Email Templates')
+
+
+class ActivationCodesModel(models.Model):
+    """
+     inherit this class to activate your model objects from sending activation codes
+     activated object must have is_active field with Type models.Booleanfield
+    """
+    email = models.ForeignKey()
+
+    class Meta:
+        abstract = True

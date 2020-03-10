@@ -139,4 +139,6 @@ async def send_mail(msg, recipients):
                 recipients=recipients
             )
 
+
+
 # def get_weather_mail():
