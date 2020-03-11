@@ -6,7 +6,7 @@ import asyncio
 import django_rq
 from rq_scheduler import Scheduler
 from .jobs import parse_feeds
-from .models import WeatherRecipients
+from .models import WeatherRecipients, CodeModel
 from  django.urls import reverse
 from rest_framework.test import APIRequestFactory
 from .views import *
@@ -106,3 +106,7 @@ class TestAPI(APITestCase):
                                 format='json')
         # self.assertEqual(resp.status_code, 201)
         print(resp.content)
+
+    def test_code_gen(self):
+        a = CodeModel()
+        print(a.id)

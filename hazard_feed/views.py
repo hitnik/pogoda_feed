@@ -29,4 +29,4 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         return response
 
 class ActivateSubscribe(APIView):
-
+    pass

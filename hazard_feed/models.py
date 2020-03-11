@@ -8,6 +8,7 @@ from tinymce.models import HTMLField
 from django.conf import settings
 import secrets
 import string
+from django.utils.deconstruct import deconstructible
 
 class TimeStampBase(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True)
@@ -99,8 +100,8 @@ class EmailTemplates(models.Model):
         verbose_name = _('Email Template')
         verbose_name_plural = _('Email Templates')
 
-
-class ActivationCodesModel(models.Model):
+@deconstructible
+class ActivationCodesBaseModel(models.Model):
     """
      inherit this class to activate your model objects from sending activation codes
      activated object must have is_active field with Type models.Booleanfield
@@ -112,13 +113,15 @@ class ActivationCodesModel(models.Model):
         code = ''.join(secrets.choice(string.digits)
                        for i in range(lenth))
 
-        if not cls.filter(id=int(code)).exists():
+        if not cls.objects.filter(id=int(code)).exists():
             return int(code)
         else: cls.gen_act_code()
 
-    id = models.UUIDField(editable=False, primary_key=True, default=lambda: ActivationCodesModel.gen_act_code())
+    id = models.UUIDField(editable=False, primary_key=True, default=gen_act_code)
 
     class Meta:
         abstract = True
 
-
+@deconstructible
+class CodeModel(ActivationCodesBaseModel):
+    pass
