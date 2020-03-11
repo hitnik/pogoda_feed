@@ -5,7 +5,9 @@ from django.db import models
 from django.core.validators import MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 from tinymce.models import HTMLField
-
+from django.conf import settings
+import secrets
+import string
 
 class TimeStampBase(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True)
@@ -103,7 +105,20 @@ class ActivationCodesModel(models.Model):
      inherit this class to activate your model objects from sending activation codes
      activated object must have is_active field with Type models.Booleanfield
     """
-    email = models.ForeignKey()
+
+    @classmethod
+    def gen_act_code(cls):
+        lenth = settings.ACTIVATION_CODE_LENTH
+        code = ''.join(secrets.choice(string.digits)
+                       for i in range(lenth))
+
+        if not cls.filter(id=int(code)).exists():
+            return int(code)
+        else: cls.gen_act_code()
+
+    id = models.UUIDField(editable=False, primary_key=True, default=lambda: ActivationCodesModel.gen_act_code())
 
     class Meta:
         abstract = True
+
+

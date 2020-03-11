@@ -160,3 +160,5 @@ TINYMCE_JS_URL = STATIC_URL + 'hazard_feed/static/js/tinymce/tinymce.min.js'
 TINYMCE_DEFAULT_CONFIG = {
     'theme': "silver",
 }
+
+ACTIVATION_CODE_LENTH = 8
