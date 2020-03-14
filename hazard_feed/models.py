@@ -100,28 +100,25 @@ class EmailTemplates(models.Model):
         verbose_name = _('Email Template')
         verbose_name_plural = _('Email Templates')
 
+def gen_act_code():
+    lenth = settings.ACTIVATION_CODE_LENTH
+    code = ''.join(secrets.choice(string.digits)
+                   for i in range(lenth))
+
+    return int(code)
+
 @deconstructible
-class ActivationCodesBaseModel(models.Model):
+class ActivationCodeBaseModel(models.Model):
     """
      inherit this class to activate your model objects from sending activation codes
      activated object must have is_active field with Type models.Booleanfield
     """
 
-    @classmethod
-    def gen_act_code(cls):
-        lenth = settings.ACTIVATION_CODE_LENTH
-        code = ''.join(secrets.choice(string.digits)
-                       for i in range(lenth))
-
-        if not cls.objects.filter(id=int(code)).exists():
-            return int(code)
-        else: cls.gen_act_code()
-
-    id = models.UUIDField(editable=False, primary_key=True, default=gen_act_code)
+    code = models.UUIDField(editable=False,  default=gen_act_code())
 
     class Meta:
         abstract = True
 
 @deconstructible
-class CodeModel(ActivationCodesBaseModel):
+class EmailActivationCodeModel(ActivationCodeBaseModel):
     pass
