@@ -19,7 +19,7 @@ class ScheduledJobsView(APIView):
                 job_data = {}
                 job_data['id'] = job.get_id()
                 job_data['func_name'] = job.func_name
-                job_data['is_scheduled'] = job.is_scheduled()
+                job_data['is_scheduled'] = job.is_scheduled
                 data[queue].append(job_data)
 
         return Response(data)
