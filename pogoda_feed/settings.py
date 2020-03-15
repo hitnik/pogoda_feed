@@ -162,3 +162,6 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 ACTIVATION_CODE_LENTH = 8
+
+# activation code expiration time in seconds
+CODE_EXPIRATION_TIME = 300

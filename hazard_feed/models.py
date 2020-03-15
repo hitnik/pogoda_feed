@@ -115,6 +115,18 @@ class ActivationCodeBaseModel(models.Model):
     """
 
     code = models.UUIDField(editable=False,  default=gen_act_code())
+    target = None
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+
+    def is_expired(self):
+        expiration = settings.CODE_EXPIRATION_TIME
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        exp = now-datetime.timedelta(seconds=expiration)
+        if exp > self.date_created:
+            return True
+        else:
+            return False
 
     class Meta:
         abstract = True
