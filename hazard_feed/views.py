@@ -5,6 +5,26 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+import django_rq
+from django.conf import settings
+
+class ScheduledJobsView(APIView):
+    def get(self, request, format=None):
+        data = {}
+        rq_queues = settings.RQ_QUEUES
+        for queue, value in rq_queues.items():
+            scheduler = django_rq.get_scheduler(queue)
+            data[queue] = []
+            for job in scheduler.get_jobs():
+                job_data = {}
+                job_data['id'] = job.get_id()
+                job_data['func_name'] = job.func_name
+                job_data['is_scheduled'] = job.is_scheduled()
+                data[queue].append(job_data)
+
+        return Response(data)
+
+
 
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
