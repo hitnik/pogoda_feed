@@ -34,7 +34,7 @@ class HazardFeedConfig(AppConfig):
             self.WEATHER_EMAIL_HOST_PASSWORD = settings.WEATHER_EMAIL_HOST_PASSWORD
 
         from .models import HazardFeeds, EmailActivationCodeModel
-        from .signals import send_hazard_feed_notification, del_other_codes
+        from .signals import send_hazard_feed_notification
         post_save.connect(send_hazard_feed_notification, sender=HazardFeeds)
         post_save.connect(del_other_codes, sender=EmailActivationCodeModel)
         from . import jobs
