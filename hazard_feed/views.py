@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 import django_rq
 from django.conf import settings
 from .utils import get_session_obj
-from .models import EmailActivationCodeModel
+from .models import EmailActivationCode
 
 
 class ScheduledJobsView(APIView):
@@ -44,7 +44,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         return Response(status=status.HTTP_302_FOUND)
                     else:
                         session = get_session_obj(self.request)
-                        EmailActivationCodeModel.objects.create(session=session, target=obj)
+                        EmailActivationCode.objects.create(session=session, target=obj)
                         return Response(status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 

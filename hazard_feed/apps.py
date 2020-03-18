@@ -33,10 +33,10 @@ class HazardFeedConfig(AppConfig):
         if hasattr(settings, 'WEATHER_EMAIL_HOST_PASSWORD'):
             self.WEATHER_EMAIL_HOST_PASSWORD = settings.WEATHER_EMAIL_HOST_PASSWORD
 
-        from .models import HazardFeeds, EmailActivationCodeModel
+        from .models import HazardFeeds, EmailActivationCode
         from .signals import send_hazard_feed_notification, send_activation_mail
         post_save.connect(send_hazard_feed_notification, sender=HazardFeeds)
-        post_save.connect(send_activation_mail, sender=EmailActivationCodeModel)
+        post_save.connect(send_activation_mail, sender=EmailActivationCode)
         from . import jobs
 
         try:
