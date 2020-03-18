@@ -19,6 +19,7 @@ from django.db.utils import OperationalError
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from .config import WEATHER_FEED_URL
+from django.contrib.sessions.models import Session
 
 def hazard_level_in_text_find(text):
     """
@@ -141,4 +142,20 @@ async def send_mail(msg, recipients):
 
 
 
-# def get_weather_mail():
+def get_session_obj(request):
+    request.session.save()
+    session_id = request.session.session_key
+    return Session.objects.get(session_key=session_id)
+
+def make_activation_code_message(code):
+    template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
+    context = Context({'code': code})
+    html = template.render(context)
+    soup = BeautifulSoup(html, 'html.parser')
+    text = soup.get_text()
+    msg = EmailMessage()
+    msg['From'] = settings.WEATHER_EMAIL_FROM
+    msg['Subject'] = 'Код активации подписки'
+    msg.set_content(text)
+    msg.add_alternative(html, subtype='html')
+    return msg

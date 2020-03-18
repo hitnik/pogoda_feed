@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     HazardLevels, HazardFeeds,
     WeatherRecipients, EmailTemplates,
-    RSSFeedUrl,
+    RSSFeedUrl, EmailActivationCodeModel
 )
 
 class BaseEnadledDisabledModelAdmin(admin.ModelAdmin):
@@ -58,3 +58,7 @@ class RSSFeedUrlAdmin(BaseEnadledDisabledModelAdmin):
     list_editable = ('is_active',)
     readonly_fields = ('id',)
     ordering = ['id']
+
+@admin.register(EmailActivationCodeModel)
+class EmailActivationCodeAdmin(admin.ModelAdmin):
+    pass

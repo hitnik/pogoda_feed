@@ -8,7 +8,8 @@ from tinymce.models import HTMLField
 from django.conf import settings
 import secrets
 import string
-from django.utils.deconstruct import deconstructible
+from django.contrib.sessions.models import Session
+
 
 class TimeStampBase(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True)
@@ -107,19 +108,19 @@ def gen_act_code():
 
     return int(code)
 
-@deconstructible
+
 class ActivationCodeBaseModel(models.Model):
     """
      inherit this class to activate your model objects from sending activation codes
      activated object must have is_active field with Type models.Booleanfield
     """
-
-    code = models.UUIDField(editable=False,  default=gen_act_code())
+    id = models.UUIDField(default=uuid.uuid4(), primary_key=True)
+    code = models.CharField(editable=False,  default=gen_act_code(), max_length=64)
     target = None
     date_created = models.DateTimeField(auto_now_add=True, null=True)
+    session = models.ForeignKey(Session, null=True, on_delete=models.CASCADE)
 
-
-    def is_expired(self):
+    def _is_expired(self):
         expiration = settings.CODE_EXPIRATION_TIME
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         exp = now-datetime.timedelta(seconds=expiration)
@@ -128,9 +129,21 @@ class ActivationCodeBaseModel(models.Model):
         else:
             return False
 
+    def activate(self, code, session):
+        if self.target and hasattr(self.target, 'is_active'):
+            if not self._is_expired() and\
+                    code == self.code \
+                    and session == self.session:
+                self.target.is_active = True
+                self.target.save()
+                return True
+        return False
+
+
     class Meta:
         abstract = True
 
-@deconstructible
+
+
 class EmailActivationCodeModel(ActivationCodeBaseModel):
-    pass
+    target = models.ForeignKey(WeatherRecipients, null=True, on_delete=models.CASCADE)

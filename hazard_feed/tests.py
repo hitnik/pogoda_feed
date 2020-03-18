@@ -6,7 +6,7 @@ import asyncio
 import django_rq
 from rq_scheduler import Scheduler
 from .jobs import parse_feeds
-from .models import WeatherRecipients, CodeModel
+from .models import WeatherRecipients
 from  django.urls import reverse
 from rest_framework.test import APIRequestFactory
 from .views import *
@@ -107,6 +107,8 @@ class TestAPI(APITestCase):
         # self.assertEqual(resp.status_code, 201)
         print(resp.content)
 
+
     def test_code_gen(self):
-        a = CodeModel()
-        print(a.id)
+        resp = self.client.post(reverse('hazard_feed:activate_subscribe'),
+                                {'code': '1234567f'}, format='json')
+        print(resp.content)

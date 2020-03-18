@@ -1,7 +1,8 @@
 import datetime
 import django_rq
-from .jobs import send_weather_notification
+from .jobs import send_weather_notification, send_activation_notification
 from redis.exceptions import ConnectionError
+
 
 def send_hazard_feed_notification(sender, instance, created, **kwargs):
     if created \
@@ -18,3 +19,13 @@ def send_hazard_feed_notification(sender, instance, created, **kwargs):
         except ConnectionError:
             pass
 
+def send_activation_mail(sender, instance, created, **kwargs):
+    if created:
+        queryset = instance.__class__.objects.filter(target=instance.target)
+        for item in queryset:
+            if not item == instance:
+                item.delete()
+        if hasattr(instance.target, 'email'):
+            recipients = [instance.target.email]
+            code = instance.code
+            send_activation_notification(code, recipients)

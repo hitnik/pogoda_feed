@@ -1,12 +1,15 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ValidationError
 import django_rq
 from django.conf import settings
+from .utils import get_session_obj
+from .models import EmailActivationCodeModel
+
 
 class ScheduledJobsView(APIView):
     def get(self, request, format=None):
@@ -35,17 +38,34 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                 if 'unique' in codes['email']:
                     serializer = self.get_serializer()
                     email = self.get_serializer_context()['request'].POST.get('email')
-                    title = self.get_serializer_context()['request'].POST.get('title')
                     model = getattr(serializer.Meta, 'model')
                     obj = model.objects.get(email=email)
-                    return Response({}, status=status.HTTP_200_OK)
+                    if obj.is_active:
+                        return Response(status=status.HTTP_302_FOUND)
+                    else:
+                        session = get_session_obj(self.request)
+                        EmailActivationCodeModel.objects.create(session=session, target=obj)
+                        return Response(status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
         response.data = {}
+
+        print(session)
         return response
 
+
 class ActivateSubscribe(APIView):
-    pass
+
+    def post(self, request):
+        data = JSONParser().parse(request)
+        serializer = ActivationCodeSerializer(data=data)
+        serializer.is_valid()
+        if serializer.is_valid():
+            serializer.save()
+            code = serializer.data['code']
+
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
