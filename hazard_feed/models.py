@@ -132,7 +132,7 @@ class ActivationCodeBaseModel(models.Model):
     def activate(self, code, session):
         if self.target and hasattr(self.target, 'is_active'):
             if not self._is_expired() and\
-                    code == self.code \
+                    check_password(code) \
                     and session == self.session:
                 self.target.is_active = True
                 self.target.save()
