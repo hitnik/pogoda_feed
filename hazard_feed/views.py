@@ -28,7 +28,7 @@ class ScheduledJobsView(APIView):
 
 
 
-class NewsletterSubscribeAPIView(generics.CreateAPIView):
+class NewsletterSubscribeAPIView(generics.APIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
 
     def handle_exception(self, exc):
@@ -44,6 +44,8 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         return Response(status=status.HTTP_302_FOUND)
                     else:
                         session = get_session_obj(self.request)
+                        obj.title = self.get_serializer_context()['request'].POST.get('title')
+                        obj.save()
                         EmailActivationCode.objects.create(session=session, target=obj)
                         return Response(status=status.HTTP_200_OK)
         return super().handle_exception(exc)
@@ -52,10 +54,12 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
         response.data = {}
-
-        print(session)
         return response
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        session = get_session_obj(self.request)
+        EmailActivationCode.objects.create(session=session, target=instance)
 
 class ActivateSubscribe(APIView):
 
