@@ -28,7 +28,7 @@ class ScheduledJobsView(APIView):
 
 
 
-class NewsletterSubscribeAPIView(generics.APIView):
+class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
 
     def handle_exception(self, exc):
