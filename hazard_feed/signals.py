@@ -29,5 +29,6 @@ def send_activation_mail(sender, instance, created, **kwargs):
             recipients = [instance.target.email]
             code = instance.code
             instance.code = make_password(code)
+            queue = django_rq.get_queue()
+            queue.enqueue(send_hazard_feed_notification,code, recipients)
             instance.save()
-            send_activation_notification(code, recipients)
