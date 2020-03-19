@@ -18,12 +18,15 @@ def parse_feeds():
 def send_weather_notification(feed):
     recipients = get_weather_recipients()
     msg = make_weather_hazard_message(feed)
-    event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(send_mail(msg, recipients))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(send_mail(msg, recipients))
 
 @job
 def send_activation_notification(code, recipients):
     msg = make_activation_code_message(code)
-    event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(send_mail(msg, recipients))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(send_mail(msg, recipients))
+
 
