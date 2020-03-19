@@ -9,7 +9,7 @@ from django.conf import settings
 import secrets
 import string
 from django.contrib.sessions.models import Session
-
+from django.contrib.auth.hashers import check_password, make_password
 
 class TimeStampBase(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True)

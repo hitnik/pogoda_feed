@@ -2,7 +2,7 @@ import datetime
 import django_rq
 from .jobs import send_weather_notification, send_activation_notification
 from redis.exceptions import ConnectionError
-
+from django.contrib.auth.hashers import check_password, make_password
 
 def send_hazard_feed_notification(sender, instance, created, **kwargs):
     if created \
@@ -28,4 +28,6 @@ def send_activation_mail(sender, instance, created, **kwargs):
         if hasattr(instance.target, 'email'):
             recipients = [instance.target.email]
             code = instance.code
+            instance.code = make_password(code)
+            instance.save()
             send_activation_notification(code, recipients)
