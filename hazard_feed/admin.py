@@ -61,4 +61,5 @@ class RSSFeedUrlAdmin(BaseEnadledDisabledModelAdmin):
 
 @admin.register(EmailActivationCode)
 class EmailActivationCodeAdmin(admin.ModelAdmin):
-    pass
+    list_display = [field.name for field in HazardFeeds._meta.get_fields()]
+    readonly_fields = ('code',)
