@@ -66,10 +66,15 @@ class ActivateSubscribe(APIView):
     def post(self, request):
         data = JSONParser().parse(request)
         serializer = ActivationCodeSerializer(data=data)
-        serializer.is_valid()
         if serializer.is_valid():
             serializer.save()
             code = serializer.data['code']
-
-            return Response(status=status.HTTP_200_OK)
+            session = get_session_obj(request)
+            if EmailActivationCode.objects.filter(session=session).exixts():
+                activation = EmailActivationCode.objects.get(session=session)
+                is_activated = activation.activate(code)
+                if is_activated:
+                    return Response(status=status.HTTP_200_OK)
+                else: return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
