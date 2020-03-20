@@ -21,8 +21,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EmailActivationCode',
             fields=[
-                ('id', models.UUIDField(default=uuid.UUID('245ac0eb-b7b0-474e-9ef6-dd9af7b7f3c5'), primary_key=True, serialize=False)),
-                ('code', models.CharField(default=62149016, editable=False, max_length=256)),
+                ('id', models.UUIDField(primary_key=True, serialize=False)),
+                ('code', models.CharField(editable=False, max_length=256)),
                 ('date_created', models.DateTimeField(auto_now_add=True, null=True)),
                 ('session', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='sessions.Session')),
                 ('target', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='hazard_feed.WeatherRecipients')),
