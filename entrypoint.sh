@@ -1,6 +1,6 @@
 #!/bin/sh
 
-git clone https://github.com/hitnik/pogoda_feed.git ./
+git clone https://github.com/hitnik/pogoda_feed.git
 
 
 python manage.py migrate
