@@ -114,8 +114,8 @@ class ActivationCodeBaseModel(models.Model):
      inherit this class to activate your model objects from sending activation codes
      activated object must have is_active field with Type models.Booleanfield
     """
-    id = models.UUIDField(default=uuid.uuid4(), primary_key=True)
-    code = models.CharField(editable=False,  default=gen_act_code(), max_length=256)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    code = models.CharField(editable=False,  default=gen_act_code, max_length=256)
     target = None
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     session = models.ForeignKey(Session, null=True, on_delete=models.CASCADE)
