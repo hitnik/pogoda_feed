@@ -78,6 +78,4 @@ class ActivateSubscribe(APIView):
                 is_activated = activation.activate(code)
                 if is_activated:
                     return Response(status=status.HTTP_200_OK)
-                else: return Response(status=status.HTTP_400_BAD_REQUEST)
-            else:return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
