@@ -67,7 +67,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 class ActivateSubscribe(APIView):
 
     def post(self, request):
-        print(request.POST)
+        print(request.POST.get('code'))
         data = JSONParser().parse(request.data)
         serializer = ActivationCodeSerializer(data=data)
         if serializer.is_valid():
