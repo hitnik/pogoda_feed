@@ -110,5 +110,5 @@ class TestAPI(APITestCase):
 
     def test_code_gen(self):
         resp = self.client.post(reverse('hazard_feed:activate_subscribe'),
-                                {'code': '12345678'}, format='json')
+                                {"code": "12345678"}, format='json')
         print(resp.content)

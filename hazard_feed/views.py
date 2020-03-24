@@ -68,7 +68,7 @@ class ActivateSubscribe(APIView):
 
     def post(self, request):
         print(request.POST)
-        data = JSONParser().parse(request)
+        data = JSONParser().parse(request.data)
         serializer = ActivationCodeSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
