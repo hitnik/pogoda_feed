@@ -39,7 +39,6 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                     serializer = self.get_serializer()
                     email = self.get_serializer_context()['request'].POST.get('email')
                     model = getattr(serializer.Meta, 'model')
-                    print(email)
                     obj = model.objects.get(email=email)
                     if obj.is_active:
                         return Response(status=status.HTTP_302_FOUND)
@@ -68,7 +67,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 class ActivateSubscribe(APIView):
 
     def post(self, request):
-        print(request.POST)
+        print(request.data)
         data = JSONParser().parse(request)
         serializer = ActivationCodeSerializer(data=data)
         if serializer.is_valid():
