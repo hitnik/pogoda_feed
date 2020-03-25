@@ -43,17 +43,20 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                     if obj.is_active:
                         return Response(status=status.HTTP_302_FOUND)
                     else:
+                        expires = settings.CODE_EXPIRATION_TIME
+                        data = {'expires': expires}
                         session = get_session_obj(self.request)
                         obj.title = self.get_serializer_context()['request'].POST.get('title')
                         obj.save()
                         EmailActivationCode.objects.create(session=session, target=obj)
-                        return Response(status=status.HTTP_200_OK)
+                        return Response(data=data, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
-        response.data = {}
+        expires = settings.CODE_EXPIRATION_TIME
+        response.data = {'expires': expires}
         return response
 
     def perform_create(self, serializer):
@@ -64,6 +67,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 class ActivateSubscribe(APIView):
 
     def post(self, request):
+        print(request.POST)
         data = JSONParser().parse(request)
         serializer = ActivationCodeSerializer(data=data)
         if serializer.is_valid():
@@ -75,6 +79,4 @@ class ActivateSubscribe(APIView):
                 is_activated = activation.activate(code)
                 if is_activated:
                     return Response(status=status.HTTP_200_OK)
-                else: return Response(status=status.HTTP_400_BAD_REQUEST)
-            else:return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)

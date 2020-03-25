@@ -161,6 +161,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': "silver",
 }
 
+
+
 ACTIVATION_CODE_LENTH = 8
 
 # activation code expiration time in seconds
