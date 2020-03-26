@@ -70,7 +70,7 @@ class ActivateSubscribe(generics.GenericAPIView):
         print(request.data)
         # data = JSONParser().parse(request)
         # serializer = ActivationCodeSerializer(data=data)
-        serializer = self.get_serializer(date=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             code = serializer.data['code']
