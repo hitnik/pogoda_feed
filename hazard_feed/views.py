@@ -67,16 +67,13 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 class ActivateSubscribe(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
     def post(self, request, format=None):
-        print(request.data)
-        # data = JSONParser().parse(request)
-        # serializer = ActivationCodeSerializer(data=data)
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             code = serializer.data['code']
-            print(code)
             session = get_session_obj(request)
-            if EmailActivationCode.objects.filter(session=session).exixts():
+            print(session)
+            if EmailActivationCode.objects.filter(session=session).exists():
                 activation = EmailActivationCode.objects.get(session=session)
                 is_activated = activation.activate(code)
                 if is_activated:
