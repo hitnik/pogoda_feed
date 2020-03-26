@@ -70,9 +70,10 @@ class ActivateSubscribe(generics.GenericAPIView):
         print(request.data)
         # data = JSONParser().parse(request)
         # serializer = ActivationCodeSerializer(data=data)
-        if self.serializer.is_valid():
-            self.serializer.save()
-            code = self.serializer.data['code']
+        serializer = self.get_serializer()
+        if serializer.is_valid():
+            serializer.save()
+            code = serializer.data['code']
             print(code)
             session = get_session_obj(request)
             if EmailActivationCode.objects.filter(session=session).exixts():
