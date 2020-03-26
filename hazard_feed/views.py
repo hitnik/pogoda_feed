@@ -67,7 +67,9 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 class NewsletterUnsibscribeAPIVIEW(generics.DestroyAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
-
+    def perform_destroy(self, instance):
+        print(instance.email)
+        # instance.delete()
 
 
 class SubscribeActivationAPIView(generics.GenericAPIView):
