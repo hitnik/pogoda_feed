@@ -129,15 +129,25 @@ class ActivationCodeBaseModel(models.Model):
         else:
             return False
 
-    def activate(self, code):
+    def _make_action(self, code, activate=True):
         if self.target and hasattr(self.target, 'is_active'):
             if not self._is_expired() and\
                     check_password(code, self.code):
-                self.target.is_active = True
+                if activate:
+                    self.target.is_active = True
+
+                else:
+                    self.target.is_active = False
                 self.target.save()
                 self.delete(keep_parents=True)
                 return True
         return False
+
+    def activate(self, code):
+        return self._make_action(code, activate=True)
+
+    def deactivate(self, code):
+        return self._make_action(code, activate=False)
 
 
     class Meta:

@@ -64,18 +64,27 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         session = get_session_obj(self.request)
         EmailActivationCode.objects.create(session=session, target=instance)
 
-class ActivateSubscribe(generics.GenericAPIView):
+class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
+
+    def perform_action(self, instance, code):
+       result = instance.activate(code)
+       return result
+
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             code = serializer.data['code']
             session = get_session_obj(request)
-            print(session)
             if EmailActivationCode.objects.filter(session=session).exists():
                 activation = EmailActivationCode.objects.get(session=session)
-                is_activated = activation.activate(code)
-                if is_activated:
+                if self.perform_action(activation, code):
                     return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class SubscribeDeactivationAPIView(SubscribeActivationAPIView):
+
+    def perform_action(self, instance, code):
+        result = instance.deactivate(code)
+        return result
