@@ -135,6 +135,7 @@ class ActivationCodeBaseModel(models.Model):
                     check_password(code, self.code):
                 self.target.is_active = True
                 self.target.save()
+                self.delete(keep_parents=True)
                 return True
         return False
 
