@@ -64,6 +64,12 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         session = get_session_obj(self.request)
         EmailActivationCode.objects.create(session=session, target=instance)
 
+class NewsletterUnsibscribeAPIVIEW(generics.DestroyAPIView):
+    serializer_class = WeatherRecipientsMailSerializer
+
+
+
+
 class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
@@ -84,6 +90,9 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class SubscribeDeactivationAPIView(SubscribeActivationAPIView):
+
+    def delete(self, request, format=None):
+        return self.post(request, format)
 
     def perform_action(self, instance, code):
         result = instance.deactivate(code)
