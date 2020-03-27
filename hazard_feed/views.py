@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 import django_rq
 from django.conf import settings
 from .utils import get_session_obj
-from .models import EmailActivationCode
+from .models import EmailActivationCode, WeatherRecipients
 
 
 class ScheduledJobsView(APIView):
@@ -66,7 +66,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 
 class NewsletterUnsibscribeAPIVIEW(generics.DestroyAPIView):
     serializer_class = WeatherRecipientsMailSerializer
-
+    queryset = WeatherRecipients
     def perform_destroy(self, instance):
         print(instance.email)
         # instance.delete()
