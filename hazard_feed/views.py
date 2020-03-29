@@ -74,7 +74,7 @@ class NewsletterUnsibscribeAPIVIEW(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-
+        return Response(status=status.HTTP_200_OK)
 
 
 class SubscribeActivationAPIView(generics.GenericAPIView):
