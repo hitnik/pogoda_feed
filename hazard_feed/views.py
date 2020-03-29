@@ -64,16 +64,16 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         session = get_session_obj(self.request)
         EmailActivationCode.objects.create(session=session, target=instance)
 
-class NewsletterUnsibscribeAPIVIEW(generics.DestroyAPIView):
+class NewsletterUnsibscribeAPIVIEW(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
     def get_queryset(self):
         return WeatherRecipients.objects.all()
 
-    def perform_destroy(self, instance):
-        print(instance.email)
-        # instance.delete()
-
+    def post(self, request, format=None):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
 
 
 
