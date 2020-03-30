@@ -12,7 +12,7 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
         model = getattr(self.Meta, 'model')
         try:
             obj = model.objects.get(email=value)
-        except model.DoesNoteExist:
+        except model.DoesNotExist:
             print('not')
 
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
