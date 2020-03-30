@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import WeatherRecipients
 from django.conf import settings
-from django.db.models import
+
 
 class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
     class Meta:
