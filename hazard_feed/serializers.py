@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import WeatherRecipients
 from django.conf import settings
-
+from django.db.models import
 
 class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +10,10 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         model = getattr(self.Meta, 'model')
-        obj = model.objects.get(email=value)
+        try:
+            obj = model.objects.get(email=value)
+        except model.DoesNoteExist:
+            print('not')
 
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
     class Meta:
