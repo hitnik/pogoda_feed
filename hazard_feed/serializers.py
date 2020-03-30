@@ -9,7 +9,6 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
         fields = ['email']
 
     def validate_email(self, value):
-        super.validate_email(value)
         model = getattr(self.Meta, 'model')
         obj = model.objects.get(email=value)
 
