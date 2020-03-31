@@ -64,7 +64,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         session = get_session_obj(self.request)
         EmailActivationCode.objects.create(session=session, target=instance)
 
-class NewsletterUnsibscribeAPIVIEW(generics.GenericAPIView):
+class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
     def get_queryset(self):
