@@ -78,7 +78,8 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
 
     def handle_exception(self, exc):
         print(exc.__class__)
-        if isinstance(exc, ValidationError404):
+        if isinstance(exc, ValidationError):
+            exc.status_code = status.HTTP_404_NOT_FOUND
             print(exc.status_code)
 
         return super().handle_exception(exc)
