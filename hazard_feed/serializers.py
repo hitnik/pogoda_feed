@@ -17,6 +17,10 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(detail='email does not exist')
         return value
 
+    def save(self, **kwargs):
+        model = getattr(self.Meta, 'model')
+        obj = model.objects.get(email=value)
+
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherRecipients
