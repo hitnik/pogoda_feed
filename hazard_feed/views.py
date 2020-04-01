@@ -77,8 +77,7 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
         return Response(status=status.HTTP_200_OK)
 
     def handle_exception(self, exc):
-        print(exc.detail['email'][0])
-        if isinstance(exc, ValidationError) and exc.detail == 'email does not exist':
+        if isinstance(exc, ValidationError) and exc.detail['email'][0] == 'email does not exist':
             exc.status_code = status.HTTP_404_NOT_FOUND
         return super().handle_exception(exc)
 
