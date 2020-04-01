@@ -4,15 +4,12 @@ from django.conf import settings
 from rest_framework import status
 
 
-class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WeatherRecipients
-        fields = ['email']
+class WeatherRecipientsMailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, allow_blank=False)
 
     def validate_email(self, value):
-        model = getattr(self.Meta, 'model')
         try:
-            obj = model.objects.get(email=value)
+            obj = WeatherRecipients.objects.get(email=value)
         except model.DoesNotExist:
             raise serializers.ValidationError(detail='email does not exist')
         return value
