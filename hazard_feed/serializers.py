@@ -13,9 +13,7 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
         try:
             obj = model.objects.get(email=value)
         except model.DoesNotExist:
-            exc = serializers.ValidationError('email doesnot exist')
-            exc.__setattr__('status_code', status.HTTP_404_NOT_FOUND)
-            raise exc
+            raise serializers.ValidationError(detail='email does not exist', code=status.HTTP_404_NOT_FOUND)
         return value
 
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
