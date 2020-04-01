@@ -10,7 +10,7 @@ class WeatherRecipientsMailSerializer(serializers.Serializer):
     def validate_email(self, value):
         try:
             obj = WeatherRecipients.objects.get(email=value)
-        except model.DoesNotExist:
+        except WeatherRecipients.DoesNotExist:
             raise serializers.ValidationError(detail='email does not exist')
         return value
 
