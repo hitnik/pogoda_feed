@@ -72,7 +72,7 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
 
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True)
+        if serializer.is_valid(raise_exception=True):
             email = serializer.serializer.validated_data.get('email')
             print(email)
         return Response(status=status.HTTP_200_OK)
