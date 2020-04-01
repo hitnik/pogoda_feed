@@ -77,7 +77,7 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
         return Response(status=status.HTTP_200_OK)
 
     def handle_exception(self, exc):
-        if isinstance(exc, ValidationError):
+        if isinstance(exc, ValidationError404):
             print(exc.status_code)
 
         return super().handle_exception(exc)
