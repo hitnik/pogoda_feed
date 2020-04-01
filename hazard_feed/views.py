@@ -78,7 +78,7 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
-            print(exc.code)
+            print(exc.status_code)
 
         return super().handle_exception(exc)
 
