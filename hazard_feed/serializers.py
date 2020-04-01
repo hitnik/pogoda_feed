@@ -13,7 +13,7 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
         try:
             obj = model.objects.get(email=value)
         except model.DoesNotExist:
-            raise serializers.ValidationError('This email does not exist')
+            raise serializers.ValidationError('not exist')
         return value
 
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):

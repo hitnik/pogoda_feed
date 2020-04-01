@@ -76,6 +76,11 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
             serializer.save()
         return Response(status=status.HTTP_200_OK)
 
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            print(exc.get_codes())
+
+        return super().handle_exception(exc)
 
 class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
