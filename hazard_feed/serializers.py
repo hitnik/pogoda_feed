@@ -3,6 +3,9 @@ from .models import WeatherRecipients
 from django.conf import settings
 from rest_framework import status
 
+class ValidationError404(serializers.ValidationError):
+    status_code = status.HTTP_404_NOT_FOUND
+
 class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherRecipients
@@ -13,7 +16,7 @@ class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
         try:
             obj = model.objects.get(email=value)
         except model.DoesNotExist:
-            raise serializers.ValidationError(detail='email does not exist', code=status.HTTP_404_NOT_FOUND)
+            raise ValidationError404(detail='email does not exist')
         return value
 
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
