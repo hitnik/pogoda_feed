@@ -2,8 +2,9 @@ from rest_framework import serializers
 from .models import WeatherRecipients
 from django.conf import settings
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
-class ValidationError404(serializers.ValidationError):
+class ValidationError404(ValidationError):
     status_code = status.HTTP_404_NOT_FOUND
 
 class WeatherRecipientsMailSerializer(serializers.ModelSerializer):
