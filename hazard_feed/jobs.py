@@ -3,7 +3,7 @@ import asyncio
 from .utils import (
     parse_weather_feeds, put_feed_to_db,
     send_mail, get_weather_recipients, create_rss_urls_list,
-    make_activation_code_message, EmailMessage
+    EmailMessage
     )
 
 @job
