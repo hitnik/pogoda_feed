@@ -153,8 +153,10 @@ def get_session_obj(request):
     return Session.objects.get(session_key=session_id)
 
 class EmailMessage():
-    activation_template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
-    deactivation_template = Template(EmailTemplates.objects.get(title='deactivation_code_mail').template)
+
+    def __init__(self):
+        self.activation_template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
+        self.deactivation_template = Template(EmailTemplates.objects.get(title='deactivation_code_mail').template)
 
     @classmethod
     def weather_hazard_message(cls, feed):
