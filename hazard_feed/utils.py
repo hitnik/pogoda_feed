@@ -147,6 +147,26 @@ def get_session_obj(request):
     session_id = request.session.session_key
     return Session.objects.get(session_key=session_id)
 
+class EmailMessage():
+
+    @classmethod
+    def weather_hazard_message(cls, feed):
+        date = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        local_tz = pytz.timezone(settings.TIME_ZONE)
+        date = date.astimezone(local_tz)
+        template = Template(EmailTemplates.objects.get(title='weather_mail').template)
+        context = Context({'date': date, 'feed': feed})
+        html = template.render(context)
+        soup = BeautifulSoup(html, 'html.parser')
+        text = soup.get_text()
+        msg = EmailMessage()
+        msg['From'] = settings.WEATHER_EMAIL_FROM
+        msg['Subject'] = feed.title
+        msg.set_content(text)
+        msg.add_alternative(html, subtype='html')
+        return msg
+
+
 def make_activation_code_message(code):
     template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
     context = Context({'code': code})

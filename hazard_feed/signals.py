@@ -1,6 +1,6 @@
 import datetime
 import django_rq
-from .jobs import send_weather_notification, send_activation_notification
+from .jobs import send_weather_notification, send_code_notification
 from redis.exceptions import ConnectionError
 from django.contrib.auth.hashers import check_password, make_password
 
@@ -30,5 +30,5 @@ def send_activation_mail(sender, instance, created, **kwargs):
             code = instance.code
             instance.code = make_password(code)
             queue = django_rq.get_queue()
-            queue.enqueue(send_activation_notification, code, recipients)
+            queue.enqueue(send_code_notification, code, recipients)
             instance.save()

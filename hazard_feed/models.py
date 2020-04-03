@@ -158,5 +158,5 @@ class ActivationCodeBaseModel(models.Model):
 class EmailActivationCode(ActivationCodeBaseModel):
     target = models.ForeignKey(WeatherRecipients, null=True, on_delete=models.CASCADE)
 
-class EmalDeativationCode(EmailActivationCode):
-    pass
+# class EmalDeativationCode(EmailActivationCode):
+#     pass
