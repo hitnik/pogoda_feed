@@ -6,6 +6,7 @@ git pull origin master
 
 
 python manage.py migrate
+python manage.py loaddata email_templates.json
 python manage.py collectstatic --no-input
 
 exec "$@"
