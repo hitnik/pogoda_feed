@@ -194,7 +194,7 @@ class EmailMessage():
 
     @classmethod
     def activation_code_message(cls, code):
-        return cls()._code_message(code, activate=True)
+        return cls._code_message(code, activate=True)
         # template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
         # context = Context({'code': code})
         # html = template.render(context)
