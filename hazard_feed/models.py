@@ -119,6 +119,7 @@ class ActivationCodeBaseModel(models.Model):
     target = None
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     session = models.ForeignKey(Session, null=True, on_delete=models.CASCADE)
+    activate = True
 
     def _is_expired(self):
         expiration = settings.CODE_EXPIRATION_TIME
