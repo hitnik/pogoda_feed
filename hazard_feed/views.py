@@ -48,7 +48,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         session = get_session_obj(self.request)
                         obj.title = self.get_serializer_context()['request'].POST.get('title')
                         obj.save()
-                        EmailActivationCode.objects.create(session=session, target=obj)
+                        EmailActivationCode.objects.create(session=session, target=obj, activate=True)
                         return Response(data=data, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
@@ -62,7 +62,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         instance = serializer.save()
         session = get_session_obj(self.request)
-        EmailActivationCode.objects.create(session=session, target=instance)
+        EmailActivationCode.objects.create(session=session, target=instance, activate=True)
 
 class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer

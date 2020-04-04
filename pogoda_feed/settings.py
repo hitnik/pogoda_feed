@@ -138,17 +138,20 @@ RQ_QUEUES = {
         'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
         'DEFAULT_TIMEOUT': 360,
+        'DEFAULT_RESULT_TTL': 100
     },
     'high': {
         'HOST': os.getenv('REDIS_HOST', 'redis'),
         'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
+        'DEFAULT_RESULT_TTL': 100
     },
     'low': {
         'HOST': os.getenv('REDIS_HOST', 'redis'),
         'PORT': os.getenv('REDIS_PORT', 6379),
         'DB': 0,
+        'DEFAULT_RESULT_TTL': 100
     }
 }
 

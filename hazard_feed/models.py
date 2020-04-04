@@ -106,7 +106,7 @@ def gen_act_code():
     code = ''.join(secrets.choice(string.digits)
                    for i in range(lenth))
 
-    return int(code)
+    return code
 
 
 class ActivationCodeBaseModel(models.Model):

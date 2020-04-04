@@ -20,6 +20,7 @@ def send_hazard_feed_notification(sender, instance, created, **kwargs):
             pass
 
 def send_activation_mail(sender, instance, created, **kwargs):
+    print(kwargs)
     if created:
         queryset = instance.__class__.objects.filter(target=instance.target)
         for item in queryset:
