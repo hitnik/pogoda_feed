@@ -112,5 +112,5 @@ class SubscribeDeactivationAPIView(SubscribeActivationAPIView):
         return self.post(request, format)
 
     def perform_action(self, instance, code):
-        result = instance.deactivate(code)
+        result = instance.activate_deactivate(code)
         return result
