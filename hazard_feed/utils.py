@@ -168,7 +168,7 @@ class Message():
         html = template.render(context)
         soup = BeautifulSoup(html, 'html.parser')
         text = soup.get_text()
-        msg = Message()
+        msg = EmailMessage()
         msg['From'] = settings.WEATHER_EMAIL_FROM
         msg['Subject'] = feed.title
         msg.set_content(text)
@@ -184,7 +184,7 @@ class Message():
         html = template.render(context)
         soup = BeautifulSoup(html, 'html.parser')
         text = soup.get_text()
-        msg = Message()
+        msg = EmailMessage()
         msg['From'] = settings.WEATHER_EMAIL_FROM
         msg['Subject'] = 'Код активации подписки'
         msg.set_content(text)
@@ -194,7 +194,8 @@ class Message():
 
     @classmethod
     def email_activation_code(cls, code):
-        return cls()._email_code(code, activate=True)
+        msg = cls()._email_code(code, activate=True)
+
         # template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
         # context = Context({'code': code})
         # html = template.render(context)
@@ -205,4 +206,4 @@ class Message():
         # msg['Subject'] = 'Код активации подписки'
         # msg.set_content(text)
         # msg.add_alternative(html, subtype='html')
-        # return msg
+        return msg
