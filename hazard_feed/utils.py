@@ -175,11 +175,13 @@ class EmailMessage():
         msg.add_alternative(html, subtype='html')
         return msg
 
-    def _code_message(self, code, activate=True):
+    @classmethod
+    def _code_message(cls, code, activate=True):
+        obj = cls()
         if activate:
-            template = self.activation_template
+            template = obj.activation_template
         else:
-            template = self.deactivation_template
+            template = obj.deactivation_template
         context = Context({'code': code})
         html = template.render(context)
         soup = BeautifulSoup(html, 'html.parser')
