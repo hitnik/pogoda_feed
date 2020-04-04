@@ -95,7 +95,7 @@ def make_weather_hazard_message(feed):
     html = template.render(context)
     soup = BeautifulSoup(html, 'html.parser')
     text = soup.get_text()
-    msg = EmailMessage()
+    msg = Message()
     msg['From'] = settings.WEATHER_EMAIL_FROM
     msg['Subject'] = feed.title
     msg.set_content(text)
@@ -152,14 +152,14 @@ def get_session_obj(request):
     session_id = request.session.session_key
     return Session.objects.get(session_key=session_id)
 
-class EmailMessage():
+class Message():
 
     def __init__(self):
         self.activation_template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
         self.deactivation_template = Template(EmailTemplates.objects.get(title='deactivation_code_mail').template)
 
     @classmethod
-    def weather_hazard_message(cls, feed):
+    def email_weather_hazard(cls, feed):
         date = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         local_tz = pytz.timezone(settings.TIME_ZONE)
         date = date.astimezone(local_tz)
@@ -168,25 +168,23 @@ class EmailMessage():
         html = template.render(context)
         soup = BeautifulSoup(html, 'html.parser')
         text = soup.get_text()
-        msg = EmailMessage()
+        msg = Message()
         msg['From'] = settings.WEATHER_EMAIL_FROM
         msg['Subject'] = feed.title
         msg.set_content(text)
         msg.add_alternative(html, subtype='html')
         return msg
 
-    @classmethod
-    def _code_message(cls, code, activate=True):
-        obj = cls()
+    def _email_code(self, code, activate=True):
         if activate:
-            template = obj.activation_template
+            template = self.activation_template
         else:
-            template = obj.deactivation_template
+            template = self.deactivation_template
         context = Context({'code': code})
         html = template.render(context)
         soup = BeautifulSoup(html, 'html.parser')
         text = soup.get_text()
-        msg = EmailMessage()
+        msg = Message()
         msg['From'] = settings.WEATHER_EMAIL_FROM
         msg['Subject'] = 'Код активации подписки'
         msg.set_content(text)
@@ -195,8 +193,8 @@ class EmailMessage():
 
 
     @classmethod
-    def activation_code_message(cls, code):
-        return cls._code_message(code, activate=True)
+    def email_activation_code(cls, code):
+        return cls()._email_code(code, activate=True)
         # template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
         # context = Context({'code': code})
         # html = template.render(context)
