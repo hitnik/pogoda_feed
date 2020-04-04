@@ -22,8 +22,11 @@ def send_weather_notification(feed):
     loop.run_until_complete(send_mail(msg, recipients))
 
 @job
-def send_code_notification(code, recipients):
-    msg = Message.email_activation_code(code)
+def send_code_notification(code, recipients, activate=True):
+    if activate:
+        msg = Message.email_activation_code(code)
+    else:
+        msg = Message.email_deactivation_code(code)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(send_mail(msg, recipients))

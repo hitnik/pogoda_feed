@@ -74,8 +74,13 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
-            print(email)
-        return Response(status=status.HTTP_200_OK)
+            target = WeatherRecipients.objects.get(email=email)
+            if target.is_active:
+                session = get_session_obj(self.request)
+                EmailActivationCode.objects.create(session=session, target=target, is_activate=False)
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError) and exc.detail['email'][0] == 'email does not exist':
@@ -86,7 +91,7 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
     def perform_action(self, instance, code):
-       result = instance.activate(code)
+       result = instance.activate_deactivate(code)
        return result
 
     def post(self, request, format=None):
