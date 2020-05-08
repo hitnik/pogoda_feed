@@ -19,3 +19,5 @@ soupsieve==1.9.5
 sqlparse==0.3.0
 whitenoise
 djangorestframework
+coreapi
+pyyaml
