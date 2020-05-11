@@ -7,6 +7,7 @@ app_name = 'hazard_feed'
 schema_view = get_schema_view(
     title='Weather hazard feeds API',
     version= '1.0.0',
+
 )
 
 urlpatterns = [
