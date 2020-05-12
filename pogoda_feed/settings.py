@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django_rq',
     'tinymce',
     'rest_framework',
-    'rest_framework_swagger'
+    'rest_framework_swagger',
     'hazard_feed',
 ]
 
