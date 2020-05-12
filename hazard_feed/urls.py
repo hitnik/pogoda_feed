@@ -16,7 +16,6 @@ schema_view = get_schema_view(
 
 swagger_view = get_swagger_view(
     title='Weather hazard feeds API',
-    renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer],
 )
 
 urlpatterns = [
