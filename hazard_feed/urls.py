@@ -1,10 +1,10 @@
-from django.urls import path
+from django.urls import path, re_path
 from .views import *
 from rest_framework.schemas import get_schema_view
 from rest_framework.renderers import JSONOpenAPIRenderer
-from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
-from rest_framework_swagger.views import get_swagger_view
-
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view as yasg_get_schema_view
+from drf_yasg import openapi
 
 app_name = 'hazard_feed'
 
@@ -14,8 +14,14 @@ schema_view = get_schema_view(
     renderer_classes=[JSONOpenAPIRenderer],
 )
 
-swagger_view = get_swagger_view(
-    title='Weather hazard feeds API',
+yasg_schema_view = yasg_get_schema_view(
+   openapi.Info(
+      title="Weather API",
+      default_version='v1',
+      description="Weather hazard feeds API",
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
@@ -24,8 +30,10 @@ urlpatterns = [
     # path('v1/jobs', ScheduledJobsView.as_view(), name='jobs'),
     path('v1/activate', SubscribeActivationAPIView.as_view(), name='activate_subscribe'),
     path('v1/deactivate', SubscribeDeactivationAPIView.as_view(), name='deactivate_subscribe'),
-    path('openapi', schema_view, name='openapi-schema'),
-    path('', swagger_view, name='docs'),
+    path('openapi', schema_view, name='schema-openapi'),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', yasg_schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', yasg_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', yasg_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
 ]
 

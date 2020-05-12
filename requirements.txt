@@ -22,4 +22,4 @@ djangorestframework
 coreapi
 pyyaml
 django-cors-headers
-django-rest-swagger
+drf-yasg
