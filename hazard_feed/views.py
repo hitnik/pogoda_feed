@@ -70,6 +70,12 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
     def get_queryset(self):
         return WeatherRecipients.objects.all()
 
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError) and exc.detail['email'][0] == 'email does not exist':
+            exc.status_code = status.HTTP_404_NOT_FOUND
+        return super().handle_exception(exc)
+
+
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -82,10 +88,6 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def handle_exception(self, exc):
-        if isinstance(exc, ValidationError) and exc.detail['email'][0] == 'email does not exist':
-            exc.status_code = status.HTTP_404_NOT_FOUND
-        return super().handle_exception(exc)
 
 class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer

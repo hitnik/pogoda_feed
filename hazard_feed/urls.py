@@ -1,12 +1,15 @@
 from django.urls import path
 from .views import *
 from rest_framework.schemas import get_schema_view
+from rest_framework.renderers import JSONOpenAPIRenderer
 
 app_name = 'hazard_feed'
 
 schema_view = get_schema_view(
     title='Weather hazard feeds API',
     version= '1.0.0',
+    renderer_classes=[JSONOpenAPIRenderer],
+
 
 )
 
