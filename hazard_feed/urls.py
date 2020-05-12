@@ -3,6 +3,8 @@ from .views import *
 from rest_framework.schemas import get_schema_view
 from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
+from rest_framework_swagger.views import get_swagger_view
+
 
 app_name = 'hazard_feed'
 
@@ -12,7 +14,7 @@ schema_view = get_schema_view(
     renderer_classes=[JSONOpenAPIRenderer],
 )
 
-swagger_view = get_schema_view(
+swagger_view = get_swagger_view(
     title='Weather hazard feeds API',
     version= '1.0.0',
     renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer],
