@@ -10,6 +10,7 @@ from django.conf import settings
 from .utils import get_session_obj
 from .models import EmailActivationCode, WeatherRecipients
 from django.urls import reverse_lazy
+from rest_framework.schemas.openapi import AutoSchema
 
 class ScheduledJobsView(APIView):
     def get(self, request, format=None):
@@ -30,6 +31,8 @@ class ScheduledJobsView(APIView):
 
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
+
+    schema = AutoSchema(operation_id='subscribe_newsletter')
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
