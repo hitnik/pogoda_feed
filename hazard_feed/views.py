@@ -9,7 +9,7 @@ import django_rq
 from django.conf import settings
 from .utils import get_session_obj
 from .models import EmailActivationCode, WeatherRecipients
-
+from django.urls import reverse_lazy
 
 class ScheduledJobsView(APIView):
     def get(self, request, format=None):
@@ -44,7 +44,9 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         return Response(status=status.HTTP_302_FOUND)
                     else:
                         expires = settings.CODE_EXPIRATION_TIME
-                        data = {'expires': expires}
+                        data = {'expires': expires,
+                                'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
+                                }
                         session = get_session_obj(self.request)
                         obj.title = self.get_serializer_context()['request'].POST.get('title')
                         obj.save()
@@ -56,7 +58,10 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
         expires = settings.CODE_EXPIRATION_TIME
-        response.data = {'expires': expires}
+        response.data = {'expires': expires,
+                         'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
+                         }
+
         return response
 
     def perform_create(self, serializer):
@@ -84,7 +89,11 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
             if target.is_active:
                 session = get_session_obj(self.request)
                 EmailActivationCode.objects.create(session=session, target=target, is_activate=False)
-                return Response(status=status.HTTP_200_OK)
+                expires = settings.CODE_EXPIRATION_TIME
+                data = {'expires': expires,
+                                 'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
+                                 }
+                return Response(status=status.HTTP_200_OK, data=data)
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
