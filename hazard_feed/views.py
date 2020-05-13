@@ -56,7 +56,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         return Response(data=data, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
-    @swagger_auto_schema(method='post', operation_id='newsletter_subscribe')
+    @swagger_auto_schema(operation_id='newsletter_subscribe')
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
