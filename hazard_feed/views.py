@@ -32,7 +32,7 @@ class ScheduledJobsView(APIView):
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
 
-    schema = AutoSchema(operation_id='subscribe_newsletter')
+    schema = AutoSchema(operation_id_base='subscribe_newsletter')
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
