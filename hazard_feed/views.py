@@ -28,7 +28,11 @@ class ScheduledJobsView(APIView):
         return Response(data)
 
 
-@method_decorator(name='post', decorator=swagger_auto_schema(operation_id='newsletter_subscribe'))
+@method_decorator(name='post',
+                  decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
+                                                operation_description="Subscripe Newsletter view",
+                                                responses={status.HTTP_200_OK:{'expires': 'int', 'code_confirm': 'string'}}
+                  ))
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
 
