@@ -6,6 +6,7 @@ from drf_yasg import openapi
 
 app_name = 'hazard_feed'
 
+
 yasg_schema_view = yasg_get_schema_view(
    openapi.Info(
       title="Weather API",

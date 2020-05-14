@@ -35,5 +35,9 @@ class ActivationCodeSerializer(serializers.Serializer):
             raise serializers.ValidationError('Not a digit')
         return value
 
+class SubcribeResponceSerializer(serializers.Serializer):
+
+    expires = serializers.IntegerField()
+    code_confirm = serializers.URLField()
 
 
