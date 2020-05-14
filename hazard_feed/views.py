@@ -81,8 +81,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_unsubscribe',
                                                 operation_description="Unsubscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer,
-                                                           status.HTTP_302_FOUND: None}
+                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer}
                   ))
 class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
@@ -112,7 +111,11 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-
+@method_decorator(name='post',
+                  decorator=swagger_auto_schema(operation_id='activate_subscribe',
+                                                operation_description="Subscripe Newsletter code confirmation view",
+                                                responses={status.HTTP_200_OK: None}
+                  ))
 class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
