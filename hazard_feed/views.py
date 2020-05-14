@@ -31,7 +31,7 @@ class ScheduledJobsView(APIView):
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
                                                 operation_description="Subscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer,
+                                                responses={status.HTTP_200_OK: SubcribeResponseSerializer,
                                                            status.HTTP_302_FOUND: None}
                   ))
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
@@ -81,7 +81,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_unsubscribe',
                                                 operation_description="Unsubscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer}
+                                                responses={status.HTTP_200_OK: SubcribeResponseSerializer}
                   ))
 class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
@@ -113,8 +113,8 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
 
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='activate_subscribe',
-                                                operation_description="Subscripe Newsletter code confirmation view",
-                                                responses={status.HTTP_200_OK: None}
+                                                operation_description="Subscribe Newsletter code confirmation view",
+                                                responses={status.HTTP_200_OK: SuccesResponseSerializer}
                   ))
 class SubscribeActivationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
@@ -132,9 +132,16 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
             if EmailActivationCode.objects.filter(session=session).exists():
                 activation = EmailActivationCode.objects.get(session=session)
                 if self.perform_action(activation, code):
-                    return Response(status=status.HTTP_200_OK)
+                    serializer = SuccesResponseSerializer(data={'ok':True})
+                    if serializer.is_valid():
+                        return Response(status=status.HTTP_200_OK, data=serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@method_decorator(name='post',
+                  decorator=swagger_auto_schema(operation_id='deactivate_subscribe',
+                                                operation_description="Unsubscribe Newsletter code confirmation view",
+                                                responses={status.HTTP_200_OK: SuccesResponseSerializer}
+                  ))
 class SubscribeDeactivationAPIView(SubscribeActivationAPIView):
 
     def delete(self, request, format=None):
