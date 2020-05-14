@@ -31,7 +31,7 @@ class ScheduledJobsView(APIView):
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
                                                 operation_description="Subscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: serializers.SubcribeResponceSerializer}
+                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer}
                   ))
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
@@ -53,7 +53,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         data = {'expires': expires,
                                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                                 }
-                        response_serializer = serializers.SubcribeResponceSerializer(data=data)
+                        response_serializer = SubcribeResponceSerializer(data=data)
                         session = get_session_obj(self.request)
                         obj.title = self.get_serializer_context()['request'].POST.get('title')
                         obj.save()
@@ -69,7 +69,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         data = {'expires': expires,
                          'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                          }
-        response_serializer = serializers.SubcribeResponceSerializer(data=data)
+        response_serializer = SubcribeResponceSerializer(data=data)
         response.data = response_serializer.data
         return response
 
