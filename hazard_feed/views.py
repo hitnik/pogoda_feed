@@ -3,7 +3,6 @@ from rest_framework import generics
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ValidationError
 import django_rq
 from django.conf import settings
@@ -11,6 +10,7 @@ from .utils import get_session_obj
 from .models import EmailActivationCode, WeatherRecipients
 from django.urls import reverse_lazy
 from drf_yasg.utils import swagger_auto_schema
+from django.utils.decorators import method_decorator
 
 class ScheduledJobsView(APIView):
     def get(self, request, format=None):
@@ -28,7 +28,7 @@ class ScheduledJobsView(APIView):
         return Response(data)
 
 
-
+@method_decorator(name='post', decorator=swagger_auto_schema(operation_id='newsletter_subscribe'))
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
 
@@ -56,7 +56,7 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         return Response(data=data, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
-    @swagger_auto_schema(operation_id='newsletter_subscribe')
+
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
