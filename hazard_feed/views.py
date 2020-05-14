@@ -53,12 +53,11 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
                         data = {'expires': expires,
                                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                                 }
-                        response_serializer = SubcribeResponceSerializer(data=data)
                         session = get_session_obj(self.request)
                         obj.title = self.get_serializer_context()['request'].POST.get('title')
                         obj.save()
                         EmailActivationCode.objects.create(session=session, target=obj, is_activate=True)
-                        return Response(data=response_serializer.data, status=status.HTTP_200_OK)
+                        return Response(data, status=status.HTTP_200_OK)
         return super().handle_exception(exc)
 
 
@@ -66,11 +65,10 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         response.status_code = status.HTTP_200_OK
         expires = settings.CODE_EXPIRATION_TIME
-        data = {'expires': expires,
+        response.data = {'expires': expires,
                          'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                          }
-        response_serializer = SubcribeResponceSerializer(data=data)
-        response.data = response_serializer.data
+
         return response
 
     def perform_create(self, serializer):
