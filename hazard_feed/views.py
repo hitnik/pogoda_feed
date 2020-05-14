@@ -137,7 +137,9 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
                         return Response(status=status.HTTP_200_OK, data=serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@method_decorator(name='post',
+
+
+@method_decorator(name='delete',
                   decorator=swagger_auto_schema(operation_id='deactivate_subscribe',
                                                 operation_description="Unsubscribe Newsletter code confirmation view",
                                                 responses={status.HTTP_200_OK: SuccesResponseSerializer}
