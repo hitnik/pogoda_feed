@@ -144,6 +144,11 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
                                                 operation_description="Unsubscribe Newsletter code confirmation view",
                                                 responses={status.HTTP_200_OK: SuccesResponseSerializer}
                   ))
+@method_decorator(name='post',
+                  decorator=swagger_auto_schema(operation_id='deactivate_subscribe',
+                                                operation_description="Unsubscribe Newsletter code confirmation view",
+                                                responses={status.HTTP_200_OK: SuccesResponseSerializer}
+                  ))
 class SubscribeDeactivationAPIView(SubscribeActivationAPIView):
 
     def delete(self, request, format=None):
