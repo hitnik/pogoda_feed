@@ -31,7 +31,8 @@ class ScheduledJobsView(APIView):
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
                                                 operation_description="Subscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer}
+                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer,
+                                                           status.HTTP_302_FOUND: None}
                   ))
 class NewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
@@ -76,6 +77,13 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         session = get_session_obj(self.request)
         EmailActivationCode.objects.create(session=session, target=instance, is_activate=True)
 
+
+@method_decorator(name='post',
+                  decorator=swagger_auto_schema(operation_id='newsletter_unsubscribe',
+                                                operation_description="Unsubscripe Newsletter view",
+                                                responses={status.HTTP_200_OK: SubcribeResponceSerializer,
+                                                           status.HTTP_302_FOUND: None}
+                  ))
 class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
@@ -98,8 +106,8 @@ class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
                 EmailActivationCode.objects.create(session=session, target=target, is_activate=False)
                 expires = settings.CODE_EXPIRATION_TIME
                 data = {'expires': expires,
-                                 'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
-                                 }
+                        'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
+                        }
                 return Response(status=status.HTTP_200_OK, data=data)
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
