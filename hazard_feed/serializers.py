@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import WeatherRecipients
 from django.conf import settings
 from rest_framework import status
+from django.core.validators import EmailValidator
 
 
 class WeatherRecipientsMailSerializer(serializers.Serializer):
@@ -14,6 +15,12 @@ class WeatherRecipientsMailSerializer(serializers.Serializer):
             raise serializers.ValidationError(detail='email does not exist')
         return value
 
+class SubscribeSerialiser(serializers.Serializer):
+    title = serializers.CharField(required=True, allow_blank=False)
+    email = serializers.EmailField(required=True, allow_blank=False, validators=[EmailValidator])
+
+    def create(self, validated_data):
+        return validated_data
 
 class WeatherRecipientsMailTitleSerializer(serializers.ModelSerializer):
     class Meta:

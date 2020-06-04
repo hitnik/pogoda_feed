@@ -34,7 +34,8 @@ class ScheduledJobsView(APIView):
                                                 responses={status.HTTP_200_OK: SubcribeResponseSerializer,
                                                            status.HTTP_302_FOUND: None}
                   ))
-class NewsletterSubscribeAPIView(generics.CreateAPIView):
+
+class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
     serializer_class = WeatherRecipientsMailTitleSerializer
 
 
@@ -76,6 +77,21 @@ class NewsletterSubscribeAPIView(generics.CreateAPIView):
         instance = serializer.save()
         session = get_session_obj(self.request)
         EmailActivationCode.objects.create(session=session, target=instance, is_activate=True)
+
+
+class NeswletterSubscribeAPIView(generics.GenericAPIView):
+    serializer_class = SubscribeSerialiser
+
+    def get_queryset(self):
+        return WeatherRecipients.objects.all()
+
+    def post(self,request, format=None):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data.get('email')
+            title = serializer.validated_data.get('title')
+
+
 
 
 @method_decorator(name='post',
