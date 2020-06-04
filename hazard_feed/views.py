@@ -47,6 +47,7 @@ class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
                     serializer = self.get_serializer()
                     email = self.get_serializer_context()['request'].POST.get('email')
                     model = getattr(serializer.Meta, 'model')
+                    print('email')
                     obj = model.objects.get(email=email)
                     if obj.is_active:
                         return Response(status=status.HTTP_302_FOUND)
@@ -70,7 +71,6 @@ class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
         response.data = {'expires': expires,
                          'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                          }
-
         return response
 
     def perform_create(self, serializer):
