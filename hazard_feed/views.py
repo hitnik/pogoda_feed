@@ -85,12 +85,12 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
     def get_queryset(self):
         return WeatherRecipients.objects.all()
 
-    def post(self,request, format=None):
+    def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
             title = serializer.validated_data.get('title')
-
+            return Response(status=status.HTTP_200_OK)
 
 
 
