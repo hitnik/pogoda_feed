@@ -79,7 +79,7 @@ class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
         EmailActivationCode.objects.create(session=session, target=instance, is_activate=True)
 
 
-class NeswletterSubscribeAPIView(generics.GenericAPIView):
+class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
 
     def get_queryset(self):
