@@ -81,16 +81,21 @@ class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
 
 class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
+    model = WeatherRecipients
 
     def get_queryset(self):
-        return WeatherRecipients.objects.all()
+        return self.model.objects.all()
+
 
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
             title = serializer.validated_data.get('title')
+            queryset = self.get_queryset()
+            if queryset.filter(email=)
             return Response(status=status.HTTP_200_OK)
+
 
 
 
