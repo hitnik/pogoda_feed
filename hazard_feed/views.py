@@ -79,21 +79,38 @@ class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
         EmailActivationCode.objects.create(session=session, target=instance, is_activate=True)
 
 
-class NewsletterSubscribeAPIView(generics.GenericAPIView):
+class NeswletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
-    model = WeatherRecipients
 
     def get_queryset(self):
-        return self.model.objects.all()
+        return WeatherRecipients.objects.all()
 
+    def create_code_response(self, recipient):
+        expires = settings.CODE_EXPIRATION_TIME
+        data = {'expires': expires,
+                'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
+                }
+        session = get_session_obj(self.request)
+        EmailActivationCode.objects.create(session=session, target=recipient, is_activate=True)
+        return Response(data, status=status.HTTP_200_OK)
 
-    def post(self, request, format=None):
+    def post(self,request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
             title = serializer.validated_data.get('title')
             queryset = self.get_queryset()
-            if queryset.filter(email=)
+            if queryset.filter(email=email).exists():
+                obj = queryset.get(email=email)
+                if obj.is_active:
+                    return Response(status=status.HTTP_302_FOUND)
+                else:
+                    obj.title = title
+                    obj.save()
+                    return self.create_code_response(obj)
+            else:
+                obj = WeatherRecipients.objects.create(email=email, title=title)
+                return self.create_code_response(obj)
             return Response(status=status.HTTP_200_OK)
 
 
