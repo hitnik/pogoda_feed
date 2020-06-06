@@ -79,7 +79,7 @@ class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
         EmailActivationCode.objects.create(session=session, target=instance, is_activate=True)
 
 
-class NeswletterSubscribeAPIView(generics.GenericAPIView):
+class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
 
     def get_queryset(self):
@@ -121,7 +121,7 @@ class NeswletterSubscribeAPIView(generics.GenericAPIView):
                                                 operation_description="Unsubscripe Newsletter view",
                                                 responses={status.HTTP_200_OK: SubcribeResponseSerializer}
                   ))
-class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
+class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
     def get_queryset(self):
