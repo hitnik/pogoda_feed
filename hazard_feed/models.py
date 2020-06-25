@@ -1,6 +1,7 @@
 import datetime
 import pytz
 import uuid
+import  json
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.utils.translation import gettext_lazy as _
@@ -129,6 +130,10 @@ class ActivationCodeBaseModel(models.Model):
             return True
         else:
             return False
+
+    def date_expiration_json(self):
+        exp = self.date_created + datetime.timedelta(seconds=settings.CODE_EXPIRATION_TIME)
+        return json.dumps(exp.__str__())
 
     def _make_action(self, code):
         if self.target and hasattr(self.target, 'is_active'):
