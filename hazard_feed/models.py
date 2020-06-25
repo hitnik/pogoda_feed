@@ -133,7 +133,7 @@ class ActivationCodeBaseModel(models.Model):
 
     def date_expiration_json(self):
         exp = self.date_created + datetime.timedelta(seconds=settings.CODE_EXPIRATION_TIME)
-        return json.dump(exp.__str__())
+        return exp
 
     def _make_action(self, code):
         if self.target and hasattr(self.target, 'is_active'):
