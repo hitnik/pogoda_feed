@@ -132,7 +132,7 @@ class ActivationCodeBaseModel(models.Model):
             return False
     @property
     def date_expiration(self):
-        return self.date_created + datetime.timedelta(seconds=settings.CODE_EXPIRATION_TIME)
+        return (self.date_created + datetime.timedelta(seconds=settings.CODE_EXPIRATION_TIME)).replace(tzinfo=pytz.utc)
 
 
     def _make_action(self, code):
