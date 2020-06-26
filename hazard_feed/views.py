@@ -44,7 +44,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
     def create_code_response(self, recipient):
         session = get_session_obj(self.request)
         obj = EmailActivationCode.objects.create(session=session, target=recipient, is_activate=True)
-        expires = obj.date_expiration_json()
+        expires = obj.date_expiration
         data = {'expires': expires,
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                 }
