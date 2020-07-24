@@ -91,7 +91,6 @@ class NeswletterSubscribeAPIView(generics.GenericAPIView):
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                 }
         session = get_session_obj(self.request)
-        print(session)
         EmailActivationCode.objects.create(session=session, target=recipient, is_activate=True)
         return Response(data, status=status.HTTP_200_OK)
 
@@ -168,7 +167,6 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
             serializer.save()
             code = serializer.data['code']
             session = get_session_obj(request)
-            print(session)
             if EmailActivationCode.objects.filter(session=session).exists():
                 activation = EmailActivationCode.objects.get(session=session)
                 if self.perform_action(activation, code):

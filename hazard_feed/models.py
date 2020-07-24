@@ -121,6 +121,7 @@ class ActivationCodeBaseModel(models.Model):
     session = models.ForeignKey(Session, null=True, on_delete=models.CASCADE)
     is_activate = models.BooleanField(default=True)
 
+
     def _is_expired(self):
         expiration = settings.CODE_EXPIRATION_TIME
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
@@ -129,6 +130,10 @@ class ActivationCodeBaseModel(models.Model):
             return True
         else:
             return False
+    @property
+    def date_expiration(self):
+        return (self.date_created + datetime.timedelta(seconds=settings.CODE_EXPIRATION_TIME)).replace(tzinfo=pytz.utc)
+
 
     def _make_action(self, code):
         if self.target and hasattr(self.target, 'is_active'):
