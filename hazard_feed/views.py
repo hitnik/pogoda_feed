@@ -34,52 +34,7 @@ class ScheduledJobsView(APIView):
                                                 responses={status.HTTP_200_OK: SubcribeResponseSerializer,
                                                            status.HTTP_302_FOUND: None}
                   ))
-
-class TestNewsletterSubscribeAPIView(generics.CreateAPIView):
-    serializer_class = WeatherRecipientsMailTitleSerializer
-
-
-    def handle_exception(self, exc):
-        if isinstance(exc, ValidationError):
-            codes = exc.get_codes()
-            if 'email' in codes:
-                if 'unique' in codes['email']:
-                    serializer = self.get_serializer()
-                    email = self.get_serializer_context()['request'].POST.get('email')
-                    model = getattr(serializer.Meta, 'model')
-                    print('email')
-                    obj = model.objects.get(email=email)
-                    if obj.is_active:
-                        return Response(status=status.HTTP_302_FOUND)
-                    else:
-                        expires = settings.CODE_EXPIRATION_TIME
-                        data = {'expires': expires,
-                                'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
-                                }
-                        session = get_session_obj(self.request)
-                        obj.title = self.get_serializer_context()['request'].POST.get('title')
-                        obj.save()
-                        EmailActivationCode.objects.create(session=session, target=obj, is_activate=True)
-                        return Response(data, status=status.HTTP_200_OK)
-        return super().handle_exception(exc)
-
-
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        response.status_code = status.HTTP_200_OK
-        expires = settings.CODE_EXPIRATION_TIME
-        response.data = {'expires': expires,
-                         'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
-                         }
-        return response
-
-    def perform_create(self, serializer):
-        instance = serializer.save()
-        session = get_session_obj(self.request)
-        EmailActivationCode.objects.create(session=session, target=instance, is_activate=True)
-
-
-class NeswletterSubscribeAPIView(generics.GenericAPIView):
+class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
 
     def get_queryset(self):
@@ -113,8 +68,6 @@ class NeswletterSubscribeAPIView(generics.GenericAPIView):
                 obj = WeatherRecipients.objects.create(email=email, title=title)
                 return self.create_code_response(obj)
             return Response(status=status.HTTP_200_OK)
-
-
 
 
 @method_decorator(name='post',
