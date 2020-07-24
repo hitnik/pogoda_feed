@@ -41,13 +41,12 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
         return WeatherRecipients.objects.all()
 
     def create_code_response(self, recipient):
-        expires = settings.CODE_EXPIRATION_TIME
-        data = {'expires': expires,
-                'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
-                }
         session = get_session_obj(self.request)
         print(session)
-        EmailActivationCode.objects.create(session=session, target=recipient, is_activate=True)
+        code = EmailActivationCode.objects.create(session=session, target=recipient, is_activate=True)
+        data = {'expires': code.date_expiration,
+                'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
+                }
         return Response(data, status=status.HTTP_200_OK)
 
     def post(self,request, format=None):
@@ -68,6 +67,8 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
                 obj = WeatherRecipients.objects.create(email=email, title=title)
                 return self.create_code_response(obj)
             return Response(status=status.HTTP_200_OK)
+
+
 
 
 @method_decorator(name='post',
