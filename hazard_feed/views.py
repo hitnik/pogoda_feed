@@ -75,7 +75,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
                                                 operation_description="Unsubscripe Newsletter view",
                                                 responses={status.HTTP_200_OK: SubcribeResponseSerializer}
                   ))
-class NewsletterUnsubscribeAPIVIEW(generics.GenericAPIView):
+class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
     def get_queryset(self):
