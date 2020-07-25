@@ -60,7 +60,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
-    'index.html#/subscribe',
+    'file:///home/user/projects/pogoda_ui/dist/index.html#/subscribe',
 ]
 
 ROOT_URLCONF = 'pogoda_feed.urls'
