@@ -57,11 +57,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ORIGIN_WHITELIST = [
-    'file:///home/user/projects/pogoda_ui/dist/index.html#/subscribe',
-]
+
 
 ROOT_URLCONF = 'pogoda_feed.urls'
 
