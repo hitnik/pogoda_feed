@@ -11,6 +11,8 @@ from .models import EmailActivationCode, WeatherRecipients
 from django.urls import reverse_lazy
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
+import jwt
+from django.conf import  settings
 
 class ScheduledJobsView(APIView):
     def get(self, request, format=None):
@@ -42,8 +44,9 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
 
     def create_code_response(self, recipient):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
+        token = jwt.encode({'id': code.id, 'exp':code.date_expiration}, settings.SECRET_KEY)
         data = {'expires': code.date_expiration,
-                'token': code.id,
+                'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                 }
         response_serializer = SubcribeResponseSerializer(data=data)
