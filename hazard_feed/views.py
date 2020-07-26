@@ -47,6 +47,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                 }
         response_serializer = SubcribeResponseSerializer(data=data)
+        response_serializer.is_valid()
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
     def post(self,request, format=None):
