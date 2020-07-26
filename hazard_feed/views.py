@@ -41,10 +41,9 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
         return WeatherRecipients.objects.all()
 
     def create_code_response(self, recipient):
-        session = get_session_obj(self.request)
-        print(session)
-        code = EmailActivationCode.objects.create(session=session, target=recipient, is_activate=True)
+        code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
         data = {'expires': code.date_expiration,
+                'token': code.id,
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                 }
         return Response(data, status=status.HTTP_200_OK)
@@ -94,10 +93,9 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             email = serializer.validated_data.get('email')
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
-                session = get_session_obj(self.request)
-                EmailActivationCode.objects.create(session=session, target=target, is_activate=False)
-                expires = settings.CODE_EXPIRATION_TIME
-                data = {'expires': expires,
+                code = EmailActivationCode.objects.create(target=target, is_activate=False)
+                data = {'expires': code.date_expiration,
+                        'token': code.id,
                         'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
                         }
                 return Response(status=status.HTTP_200_OK, data=data)
@@ -122,7 +120,6 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
             serializer.save()
             code = serializer.data['code']
             session = get_session_obj(request)
-            print(session)
             if EmailActivationCode.objects.filter(session=session).exists():
                 activation = EmailActivationCode.objects.get(session=session)
                 if self.perform_action(activation, code):

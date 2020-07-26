@@ -118,7 +118,6 @@ class ActivationCodeBaseModel(models.Model):
     code = models.CharField(editable=False,  default=gen_act_code, max_length=256)
     target = None
     date_created = models.DateTimeField(auto_now_add=True, null=True)
-    session = models.ForeignKey(Session, null=True, on_delete=models.CASCADE)
     is_activate = models.BooleanField(default=True)
 
 
@@ -142,7 +141,6 @@ class ActivationCodeBaseModel(models.Model):
                     check_password(code, self.code):
                 if self.is_activate:
                     self.target.is_active = True
-
                 else:
                     self.target.is_active = False
                 self.target.save()
