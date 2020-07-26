@@ -21,4 +21,4 @@ whitenoise
 djangorestframework
 django-cors-headers
 drf-yasg
-pyjwt
+PyJWT
