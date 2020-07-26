@@ -31,7 +31,7 @@ class ActivationCodeSerializer(serializers.Serializer):
     code = serializers.CharField(required=False, allow_blank=True,
                                  max_length=settings.ACTIVATION_CODE_LENTH,
                                  min_length=settings.ACTIVATION_CODE_LENTH)
-    token = serializers.UUIDField(required=True, format='hex')
+    token = serializers.UUIDField(required=True, format='hex-verbose')
 
     def create(self, validated_data):
         return validated_data
@@ -45,9 +45,12 @@ class ActivationCodeSerializer(serializers.Serializer):
 
 class SubcribeResponseSerializer(serializers.Serializer):
 
-    expires = serializers.IntegerField()
+    expires = serializers.DateTimeField()
+    token = serializers.UUIDField(format='hex')
     code_confirm = serializers.URLField()
+
 
 class SuccesResponseSerializer(serializers.Serializer):
 
     ok = serializers.BooleanField()
+
