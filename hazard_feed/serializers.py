@@ -31,7 +31,7 @@ class ActivationCodeSerializer(serializers.Serializer):
     code = serializers.CharField(required=False, allow_blank=True,
                                  max_length=settings.ACTIVATION_CODE_LENTH,
                                  min_length=settings.ACTIVATION_CODE_LENTH)
-    token = serializers.UUIDField(required=True, format='hex-verbose')
+    token = serializers.UUIDField(required=True, format='hex_verbose')
 
     def create(self, validated_data):
         return validated_data
