@@ -43,7 +43,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
     def create_code_response(self, recipient):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
         data = {'expires': code.date_expiration,
-                'token': code.id,
+                'token': code.id.hex,
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
                 }
         response_serializer = SubcribeResponseSerializer(data=data)
