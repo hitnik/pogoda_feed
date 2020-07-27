@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'tinymce',
     'rest_framework',
     'drf_yasg',
-    'jwt',
     'hazard_feed',
 ]
 
