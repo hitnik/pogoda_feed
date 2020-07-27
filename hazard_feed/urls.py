@@ -20,7 +20,6 @@ yasg_schema_view = yasg_get_schema_view(
 urlpatterns = [
     path('v1/subscribe_newsletter', NewsletterSubscribeAPIView.as_view(), name='subscribe_newsletter'),
     path('v1/unsubscribe_newsletter', NewsletterUnsubscribeAPIView.as_view(), name='unsubscribe_newsletter'),
-    # path('v1/jobs', ScheduledJobsView.as_view(), name='jobs'),
     path('v1/activate', SubscribeActivationAPIView.as_view(), name='activate_subscribe'),
     path('v1/deactivate', SubscribeDeactivationAPIView.as_view(), name='deactivate_subscribe'),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', yasg_schema_view.without_ui(cache_timeout=0), name='schema-json'),
