@@ -44,7 +44,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
 
     def create_code_response(self, recipient):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
-        token = jwt.encode({'id': code.id, 'exp': code.date_expiration}, settings.SECRET_KEY)
+        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration}, settings.SECRET_KEY)
         data = {'expires': code.date_expiration,
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
