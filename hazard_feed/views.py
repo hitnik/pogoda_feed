@@ -44,7 +44,8 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
 
     def create_code_response(self, recipient):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
-        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration}, settings.SECRET_KEY, algorithm='HS256')
+        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
+                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
         data = {'expires': code.date_expiration,
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
@@ -124,7 +125,7 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             try:
-                data = jwt.decode(serializer.data['token'], settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+                data = jwt.decode(serializer.data['token'], settings.SECRET_KEY, algorithm='HS256')
             except jwt.ExpiredSignatureError:
                 print('expired')
                 return Response(status=status.HTTP_400_BAD_REQUEST)
