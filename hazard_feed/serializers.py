@@ -46,7 +46,7 @@ class ActivationCodeSerializer(serializers.Serializer):
 class SubcribeResponseSerializer(serializers.Serializer):
 
     expires = serializers.DateTimeField()
-    token = serializers.UUIDField(format='hex')
+    token = serializers.CharField()
     code_confirm = serializers.URLField()
 
 
