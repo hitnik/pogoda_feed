@@ -123,10 +123,14 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            try:
+                id = jwt.decode(serializer.data['token'], settings.SECRET_KEY)
+            except jwt.ExpiredSignatureError:
+                print('expired')
+                return Response(status.HTTP_400_BAD_REQUEST)
             code = serializer.data['code']
-            session = get_session_obj(request)
-            if EmailActivationCode.objects.filter(session=session).exists():
-                activation = EmailActivationCode.objects.get(session=session)
+            if EmailActivationCode.objects.filter(id=id).exists():
+                activation = EmailActivationCode.objects.get(id=id)
                 if self.perform_action(activation, code):
                     serializer = SuccesResponseSerializer(data={'ok':True})
                     if serializer.is_valid():
