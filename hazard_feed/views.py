@@ -92,6 +92,17 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             exc.status_code = status.HTTP_404_NOT_FOUND
         return super().handle_exception(exc)
 
+    def create_code_response(self, recipient):
+        code = EmailActivationCode.objects.create(target=recipient, is_activate=False)
+        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
+                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+        data = {'expires': code.date_expiration,
+                'token': token,
+                'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
+                }
+        response_serializer = SubcribeResponseSerializer(data=data)
+        response_serializer.is_valid()
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
@@ -99,14 +110,9 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             email = serializer.validated_data.get('email')
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
-                code = EmailActivationCode.objects.create(target=target, is_activate=False)
-                data = {'expires': code.date_expiration,
-                        'token': code.id,
-                        'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
-                        }
-                return Response(status=status.HTTP_200_OK, data=data)
+                return self.create_code_response(target)
             else:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='activate_subscribe',
