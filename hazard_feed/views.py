@@ -112,7 +112,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
                 print('active')
-                self.create_code_response(target)
+                return self.create_code_response(target)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
