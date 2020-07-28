@@ -111,6 +111,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             email = serializer.validated_data.get('email')
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
+                print('active')
                 self.create_code_response(target)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
