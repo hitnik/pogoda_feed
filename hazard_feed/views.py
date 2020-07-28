@@ -110,7 +110,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             email = serializer.validated_data.get('email')
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
-                return self.create_code_response(target)
+                self.create_code_response(target)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -145,19 +145,3 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
                     if serializer.is_valid():
                         return Response(status=status.HTTP_200_OK, data=serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
-
-
-
-@method_decorator(name='post',
-                  decorator=swagger_auto_schema(operation_id='deactivate_subscribe',
-                                                operation_description="Unsubscribe Newsletter code confirmation view",
-                                                responses={status.HTTP_200_OK: SuccesResponseSerializer}
-                  ))
-class SubscribeDeactivationAPIView(SubscribeActivationAPIView):
-
-    def post(self, request, format=None):
-        return self.post(request, format)
-
-    def perform_action(self, instance, code):
-        result = instance.activate_deactivate(code)
-        return result

@@ -20,8 +20,7 @@ yasg_schema_view = yasg_get_schema_view(
 urlpatterns = [
     path('v1/subscribe_newsletter', NewsletterSubscribeAPIView.as_view(), name='subscribe_newsletter'),
     path('v1/unsubscribe_newsletter', NewsletterUnsubscribeAPIView.as_view(), name='unsubscribe_newsletter'),
-    path('v1/activate', SubscribeActivationAPIView.as_view(), name='activate_subscribe'),
-    path('v1/deactivate', SubscribeDeactivationAPIView.as_view(), name='deactivate_subscribe'),
+    path('v1/code-validate', SubscribeActivationAPIView.as_view(), name='code_validate'),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', yasg_schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', yasg_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', yasg_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
