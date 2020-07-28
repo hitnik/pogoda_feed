@@ -53,4 +53,4 @@ class SubcribeResponseSerializer(serializers.Serializer):
 class SuccesResponseSerializer(serializers.Serializer):
 
     ok = serializers.BooleanField()
-
+    message = serializers.CharField()

@@ -48,7 +48,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
                            settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
         data = {'expires': code.date_expiration,
                 'token': token,
-                'code_confirm': reverse_lazy('hazard_feed:activate_subscribe')
+                'code_confirm': reverse_lazy('hazard_feed:code_validate')
                 }
         response_serializer = SubcribeResponseSerializer(data=data)
         response_serializer.is_valid()
@@ -98,7 +98,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
                            settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
         data = {'expires': code.date_expiration,
                 'token': token,
-                'code_confirm': reverse_lazy('hazard_feed:deactivate_subscribe')
+                'code_confirm': reverse_lazy('hazard_feed:code_validate')
                 }
         response_serializer = SubcribeResponseSerializer(data=data)
         response_serializer.is_valid()
@@ -119,7 +119,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
                                                 operation_description="Subscribe Newsletter code confirmation view",
                                                 responses={status.HTTP_200_OK: SuccesResponseSerializer}
                   ))
-class SubscribeActivationAPIView(generics.GenericAPIView):
+class CodeValidationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
     def perform_action(self, instance, code):
@@ -140,8 +140,12 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
             id = data['id']
             if EmailActivationCode.objects.filter(id=id).exists():
                 activation = EmailActivationCode.objects.get(id=id)
+                if activation.is_activate:
+                    message = 'Your subscribe on newsletter activated'
+                else:
+                    message = 'Your subscribe on newsletter deactivated'
                 if self.perform_action(activation, code):
-                    serializer = SuccesResponseSerializer(data={'ok':True})
+                    serializer = SuccesResponseSerializer(data={'ok':True, 'message': message})
                     if serializer.is_valid():
                         return Response(status=status.HTTP_200_OK, data=serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
