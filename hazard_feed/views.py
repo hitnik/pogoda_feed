@@ -113,6 +113,8 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
                 self.create_code_response(target)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='activate_subscribe',
