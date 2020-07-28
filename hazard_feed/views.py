@@ -6,13 +6,12 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 import django_rq
 from django.conf import settings
-from .utils import get_session_obj
+import time
 from .models import EmailActivationCode, WeatherRecipients
 from django.urls import reverse_lazy
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 import jwt
-from django.conf import  settings
 
 class ScheduledJobsView(APIView):
     def get(self, request, format=None):
@@ -46,7 +45,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
         token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
                            settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-        data = {'expires': code.date_expiration,
+        data = {'expires': time.mktime(code.date_expiration.timetuple()),
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:code_validate')
                 }
@@ -96,7 +95,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=False)
         token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
                            settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-        data = {'expires': code.date_expiration,
+        data = {'expires': time.mktime(code.date_expiration.timetuple()),
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:code_validate')
                 }
@@ -107,11 +106,9 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            print('valid')
             email = serializer.validated_data.get('email')
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
-                print('active')
                 return self.create_code_response(target)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
