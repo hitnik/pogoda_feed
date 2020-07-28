@@ -141,9 +141,9 @@ class CodeValidationAPIView(generics.GenericAPIView):
             if EmailActivationCode.objects.filter(id=id).exists():
                 activation = EmailActivationCode.objects.get(id=id)
                 if activation.is_activate:
-                    message = 'Your subscribe on newsletter activated'
+                    message = 'Your newsletter subscription has been activated'
                 else:
-                    message = 'Your subscribe on newsletter deactivated'
+                    message = 'your newsletter subscription has been deactivated'
                 if self.perform_action(activation, code):
                     serializer = SuccesResponseSerializer(data={'ok':True, 'message': message})
                     if serializer.is_valid():
