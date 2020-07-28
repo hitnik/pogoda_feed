@@ -107,6 +107,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            print('valid')
             email = serializer.validated_data.get('email')
             target = WeatherRecipients.objects.get(email=email)
             if target.is_active:
