@@ -127,9 +127,9 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
             try:
                 data = jwt.decode(serializer.data['token'], settings.SECRET_KEY, algorithm='HS256')
             except jwt.ExpiredSignatureError:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'code is expired'})
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Code is expired'})
             except jwt.InvalidTokenError:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'invalid token'})
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid token'})
             code = serializer.data['code']
             id = data['id']
             if EmailActivationCode.objects.filter(id=id).exists():
@@ -138,7 +138,7 @@ class SubscribeActivationAPIView(generics.GenericAPIView):
                     serializer = SuccesResponseSerializer(data={'ok':True})
                     if serializer.is_valid():
                         return Response(status=status.HTTP_200_OK, data=serializer.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
 
 
