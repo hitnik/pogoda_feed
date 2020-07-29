@@ -45,7 +45,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
         token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
                            settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-        data = {'expires': int(time.mktime(code.date_expiration.timetuple()*1000)),
+        data = {'expires': int(code.date_expiration.timestamp() * 1000),
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:code_validate')
                 }
@@ -95,7 +95,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=False)
         token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
                            settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-        data = {'expires': int(time.mktime(code.date_expiration.timetuple())),
+        data = {'expires': int(code.date_expiration.timestamp() * 1000),
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:code_validate')
                 }
