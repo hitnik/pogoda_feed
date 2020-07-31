@@ -111,7 +111,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
             if target.is_active:
                 return self.create_code_response(target)
             else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_303_SEE_OTHER)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
