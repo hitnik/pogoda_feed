@@ -5,7 +5,7 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-import django_rq
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import time
 from .models import EmailActivationCode, WeatherRecipients
@@ -41,6 +41,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
         response_serializer.is_valid()
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
+    @csrf_exempt
     def post(self,request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
