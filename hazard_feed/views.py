@@ -92,6 +92,7 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
         response_serializer.is_valid()
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
+    @csrf_exempt
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
