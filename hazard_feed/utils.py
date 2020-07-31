@@ -189,7 +189,7 @@ class Message():
         if activate:
             msg['Subject'] = 'Код активации подписки'
         else:
-            template = msg['Subject'] = 'Код деактивации подписки'
+            msg['Subject'] = 'Код деактивации подписки'
         msg.set_content(text)
         msg.add_alternative(html, subtype='html')
         return msg
