@@ -116,6 +116,7 @@ class CodeValidationAPIView(generics.GenericAPIView):
        result = instance.activate_deactivate(code)
        return result
 
+    @csrf_exempt
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
