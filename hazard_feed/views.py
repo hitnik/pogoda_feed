@@ -17,9 +17,7 @@ import jwt
 class IndexView(TemplateView):
     template_name = 'hazard_feed/index.html'
 
-@method_decorator(name='post',
-                  decorator=csrf_exempt()
-                  )
+@method_decorator(csrf_exempt, name='dispatch')
 class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
 
