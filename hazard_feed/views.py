@@ -18,11 +18,8 @@ class IndexView(TemplateView):
     template_name = 'hazard_feed/index.html'
 
 @method_decorator(name='post',
-                  decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
-                                                operation_description="Subscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponseSerializer,
-                                                           status.HTTP_302_FOUND: None}
-                  ))
+                  decorator=csrf_exempt()
+                  )
 class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
 
@@ -41,7 +38,6 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
         response_serializer.is_valid()
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
-    @csrf_exempt
     def post(self,request, format=None):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
