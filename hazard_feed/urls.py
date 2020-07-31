@@ -18,6 +18,7 @@ yasg_schema_view = yasg_get_schema_view(
 )
 
 urlpatterns = [
+    path ('', IndexView, name='index_view'),
     path('v1/subscribe_newsletter', NewsletterSubscribeAPIView.as_view(), name='subscribe_newsletter'),
     path('v1/unsubscribe_newsletter', NewsletterUnsubscribeAPIView.as_view(), name='unsubscribe_newsletter'),
     path('v1/code-validate', CodeValidationAPIView.as_view(), name='code_validate'),

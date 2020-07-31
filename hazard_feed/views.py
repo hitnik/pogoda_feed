@@ -1,3 +1,4 @@
+from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import *
@@ -13,21 +14,8 @@ from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 import jwt
 
-class ScheduledJobsView(APIView):
-    def get(self, request, format=None):
-        data = {}
-        rq_queues = settings.RQ_QUEUES
-        for queue, value in rq_queues.items():
-            scheduler = django_rq.get_scheduler(queue)
-            data[queue] = []
-            for job in scheduler.get_jobs():
-                job_data = {}
-                job_data['id'] = job.get_id()
-                job_data['func_name'] = job.func_name
-                data[queue].append(job_data)
-
-        return Response(data)
-
+class IndexView(TemplateView):
+    template_name = 'hazard_feed/index.html'
 
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
