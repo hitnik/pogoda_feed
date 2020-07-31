@@ -186,7 +186,10 @@ class Message():
         text = soup.get_text()
         msg = EmailMessage()
         msg['From'] = settings.WEATHER_EMAIL_FROM
-        msg['Subject'] = 'Код активации подписки'
+        if activate:
+            msg['Subject'] = 'Код активации подписки'
+        else:
+            template = msg['Subject'] = 'Код деактивации подписки'
         msg.set_content(text)
         msg.add_alternative(html, subtype='html')
         return msg
