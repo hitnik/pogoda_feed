@@ -14,9 +14,6 @@ from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 import jwt
 
-class IndexView(TemplateView):
-    template_name = 'hazard_feed/index.html'
-
 @method_decorator(name='post',
                   decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
                                                 operation_description="Subscripe Newsletter view",
