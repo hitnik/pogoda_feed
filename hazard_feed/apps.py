@@ -46,7 +46,7 @@ class HazardFeedConfig(AppConfig):
                     job.delete()
             scheduler.schedule(scheduled_time=datetime.datetime.utcnow() + datetime.timedelta(seconds=5),
                                func=jobs.parse_feeds,
-                               interval=600
+                               interval=200, result_ttl=199
                                )
         except ConnectionError:
             pass
