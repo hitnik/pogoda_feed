@@ -10,7 +10,7 @@ from .models import (
 )
 from django.conf import settings
 import aiosmtplib
-from django.template import loader
+import nltk
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
 from django.apps import apps
@@ -206,3 +206,8 @@ class Message():
 
 def date_from_text_parser(text):
     pass
+
+
+def remove_hazard_level_from_feed(hazard_level, text):
+    sentences = nltk.sent_tokenize(text)
+    print(sentences)
