@@ -26,7 +26,6 @@ joblib==0.16.0
 jsonschema==3.2.0
 MarkupSafe==1.1.1
 nltk==3.5
-packaging==20.3
 pycparser==2.19
 PyJWT==1.7.1
 pyparsing==2.4.7
