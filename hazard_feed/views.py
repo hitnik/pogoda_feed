@@ -10,16 +10,10 @@ from django.conf import settings
 import time
 from .models import EmailActivationCode, WeatherRecipients
 from django.urls import reverse_lazy
-from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 import jwt
 
-@method_decorator(name='post',
-                  decorator=swagger_auto_schema(operation_id='newsletter_subscribe',
-                                                operation_description="Subscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponseSerializer,
-                                                           status.HTTP_302_FOUND: None}
-                  ))
+
 class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
 
@@ -61,11 +55,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
 
 
 
-@method_decorator(name='post',
-                  decorator=swagger_auto_schema(operation_id='newsletter_unsubscribe',
-                                                operation_description="Unsubscripe Newsletter view",
-                                                responses={status.HTTP_200_OK: SubcribeResponseSerializer}
-                  ))
+
 class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
     serializer_class = WeatherRecipientsMailSerializer
 
@@ -102,11 +92,6 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator(name='post',
-                  decorator=swagger_auto_schema(operation_id='activate_subscribe',
-                                                operation_description="Subscribe Newsletter code confirmation view",
-                                                responses={status.HTTP_200_OK: SuccesResponseSerializer}
-                  ))
 class CodeValidationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
