@@ -1,16 +1,12 @@
-from django.views.generic import TemplateView
-from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import *
+from hazard_feed.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-import time
-from .models import EmailActivationCode, WeatherRecipients
+from hazard_feed.models import EmailActivationCode, WeatherRecipients
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 import jwt
 
 
