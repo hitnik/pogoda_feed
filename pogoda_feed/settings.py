@@ -178,3 +178,6 @@ ACTIVATION_CODE_LENTH = 8
 
 # activation code expiration time in seconds
 CODE_EXPIRATION_TIME = 180
+
+
+DATE_API = os.environ.get('DATE_API', 'http://127.0.0.1:5000/v1/parse-date')
