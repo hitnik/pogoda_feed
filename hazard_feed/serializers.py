@@ -56,7 +56,7 @@ class SuccesResponseSerializer(serializers.Serializer):
 class HazardLevelModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = HazardLevels
-        fields = ['pk','title', 'danger_level',
+        fields = ['id', 'title', 'danger_level',
                   'color_code', 'description'
                  ]
 

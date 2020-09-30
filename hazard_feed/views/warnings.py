@@ -8,7 +8,7 @@ class MyPageNumberPagination(PageNumberPagination):
     page_size = 10
 
 class HazardLevelsViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = HazardLevels
+    queryset = HazardLevels.objects.all()
     serializer_class = HazardLevelModelSerializer
 
 
