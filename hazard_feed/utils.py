@@ -70,7 +70,7 @@ def parse_weather_feeds(*args):
                     if hazard_level:
                         hazard_feed = HazardFeeds(
                             id=feed.id, date=date, title=feed.title,
-                            link=feed.link, summary=summary,
+                            external_link=feed.external_link, summary=summary,
                             hazard_level=hazard_level,
                             date_start=date_start,
                             date_end=date_end,

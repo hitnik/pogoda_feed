@@ -2,19 +2,35 @@ from rest_framework import generics, viewsets
 from rest_framework.pagination import PageNumberPagination
 from ..models import  HazardFeeds, HazardLevels
 from ..serializers import HazardWarningsSerializer, HazardLevelModelSerializer
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 
-class MyPageNumberPagination(PageNumberPagination):
-    page_size = 10
 
-class HazardLevelsViewset(viewsets.ReadOnlyModelViewSet):
+class HazardWarningsPageNumberPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+
+
+
+class HazardLevelsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = HazardLevels.objects.all()
     serializer_class = HazardLevelModelSerializer
 
 
-class HazardListAPIView(generics.ListAPIView):
-    queryset = HazardFeeds.objects.all()
+class DateFilterSet(filters.FilterSet):
+    date_end = filters.DateFromToRangeFilter()
+    date_start = filters.DateFromToRangeFilter()
+
+    class Meta:
+        model = HazardFeeds
+        fields =['date_end', 'date_start']
+
+class HazardWarningsAPIViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = HazardFeeds.objects.all().order_by('date').reverse()
     serializer_class = HazardWarningsSerializer
-    # pagination_class = MyPageNumberPagination
-    # filter_backends =  [DjangoFilterBackend]
+    pagination_class = HazardWarningsPageNumberPagination
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = DateFilterSet
+
+
+# class HazardWarnings
 

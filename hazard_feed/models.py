@@ -48,7 +48,7 @@ class HazardFeeds(TimeStampBase):
     id = models.BigIntegerField(primary_key=True)
     date = models.DateTimeField()
     title = models.CharField(max_length=128)
-    link = models.URLField()
+    external_link = models.URLField()
     summary = models.TextField()
     hazard_level = models.ForeignKey(HazardLevels, on_delete=models.CASCADE)
     is_sent = models.BooleanField(default=False)

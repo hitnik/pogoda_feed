@@ -60,8 +60,13 @@ class HazardLevelModelSerializer(serializers.ModelSerializer):
                   'color_code', 'description'
                  ]
 
-class HazardWarningsSerializer(serializers.ModelSerializer):
+class HazardWarningsSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="hazard_feed:hazard_warnings-detail")
+
     class Meta:
         model = HazardFeeds
-        fields = ['id', 'title', 'link', 'summary',
+        fields = ['id', 'url', 'title', 'external_link', 'summary',
                   'hazard_level', 'date_start', 'date_end']
+        extra_kwargs = {
+            'hazard_level': {'view_name': 'hazard_feed:hazard_levels-detail'},
+        }
