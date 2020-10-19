@@ -7,6 +7,7 @@ from django_filters import rest_framework as filters
 
 class HazardWarningsPageNumberPagination(PageNumberPagination):
     page_size = 5
+    max_page_size = 20
     page_size_query_param = 'page_size'
 
 
@@ -22,7 +23,7 @@ class DateFilterSet(filters.FilterSet):
 
     class Meta:
         model = HazardFeeds
-        fields =['date_end', 'date_start']
+        fields = ['date_end', 'date_start']
 
 class HazardWarningsAPIViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = HazardFeeds.objects.all().order_by('date').reverse()
