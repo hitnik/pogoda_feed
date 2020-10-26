@@ -17,6 +17,10 @@ class WeatherRecipientsMailSerializer(serializers.Serializer):
 class SubscribeSerialiser(serializers.Serializer):
     title = serializers.CharField(required=True, allow_blank=False)
     email = serializers.EmailField(required=True, allow_blank=False, validators=[EmailValidator])
+    hazard_levels = serializers.MultipleChoiceField(required=True,
+                                                    allow_blank=False,
+                                                    choices=HazardLevels.objects.all().values_list('id', flat=True)
+                                                    )
 
     def create(self, validated_data):
         return validated_data
