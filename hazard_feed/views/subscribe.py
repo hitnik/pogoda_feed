@@ -35,26 +35,22 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
             email = serializer.validated_data.get('email')
             title = serializer.validated_data.get('title')
             levels = list(serializer.validated_data.get('hazard_levels'))
-            hazard_levels = HazardLevels.objects.filter(id__in=levels)
             queryset = self.get_queryset()
             if queryset.filter(email=email).exists():
                 obj = queryset.get(email=email)
                 if obj.is_active:
                     obj.hazard_levels.clear()
-                    for level in hazard_levels:
-                        obj.hazard_levels.add(level)
+                    obj.hazard_levels.add(*levels)
                     return Response(status=status.HTTP_302_FOUND)
                 else:
                     obj.title = title
                     obj.hazard_levels.clear()
-                    for level in hazard_levels:
-                        obj.hazard_levels.add(level)
+                    obj.hazard_levels.add(*levels)
                     obj.save()
                     return self.create_code_response(obj)
             else:
                 obj = WeatherRecipients.objects.create(email=email, title=title)
-                for level in hazard_levels:
-                    obj.hazard_levels.add(level)
+                obj.hazard_levels.add(*levels)
                 obj.save()
                 return self.create_code_response(obj)
             return Response(status=status.HTTP_200_OK)

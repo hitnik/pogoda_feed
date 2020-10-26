@@ -84,7 +84,7 @@ class WeatherRecipients(models.Model):
     title = models.CharField(max_length=64, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=False)
-    hazard_levels = models.ManyToManyField(HazardLevels)
+    hazard_levels = models.ManyToManyField(HazardLevels, null=True)
 
     def __str__(self):
         return '%s' % self.title
