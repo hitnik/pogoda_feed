@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from hazard_feed.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
@@ -126,3 +126,8 @@ class CodeValidationAPIView(generics.GenericAPIView):
                     if serializer.is_valid():
                         return Response(status=status.HTTP_200_OK, data=serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
+
+class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = WeatherRecipients.objects.all()
+    serializer_class = WeatherRecipientsModelSerializer
+    lookup_field = 'email'
