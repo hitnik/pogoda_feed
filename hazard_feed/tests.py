@@ -41,7 +41,7 @@ class TestHazardFeeds(TestCase):
             id=1580800025,
             date=datetime.datetime.utcnow(),
             date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
-            title='Предупреждение о неблагоприятном явлении',
+            title='Предупреждение о явлении',
             external_link='http://www.pogoda.by/news/?page=34647',
             summary='Желтый уровень опасности. 5 февраля (среда) на '
                     'отдельных участках дорог республики ожидается гололедица.',
@@ -50,7 +50,6 @@ class TestHazardFeeds(TestCase):
         )
         msg = make_weather_hazard_message(feed)
         recipients = get_weather_recipients(feed)
-        print(recipients)
         event_loop = asyncio.get_event_loop()
         event_loop.run_until_complete(send_mail(msg, recipients))
 
