@@ -39,7 +39,7 @@ class TestHazardFeeds(TestCase):
     def test_send_weather_mail(self):
         feeds = parse_weather_feeds(WEATHER_FEED_URL)
         msg = make_weather_hazard_message(feeds[0])
-        recipients = get_weather_recipients()
+        recipients = get_weather_recipients(feeds[0])
         event_loop = asyncio.get_event_loop()
         event_loop.run_until_complete(send_mail(msg, recipients))
 
