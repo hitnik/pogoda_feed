@@ -37,9 +37,20 @@ class TestHazardFeeds(TestCase):
 
 
     def test_send_weather_mail(self):
-        feeds = parse_weather_feeds(WEATHER_FEED_URL)
-        msg = make_weather_hazard_message(feeds[0])
-        recipients = get_weather_recipients(feeds[0])
+        feed = HazardFeeds.objects.create(
+            id=1580800025,
+            date=datetime.datetime.utcnow(),
+            date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
+            title='Предупреждение о неблагоприятном явлении',
+            link='http://www.pogoda.by/news/?page=34647',
+            summary='Желтый уровень опасности. 5 февраля (среда) на '
+                    'отдельных участках дорог республики ожидается гололедица.',
+            hazard_level=HazardLevels.objects.get(id=3),
+            is_sent=False
+        )
+        msg = make_weather_hazard_message(feed)
+        recipients = get_weather_recipients(feed)
+        print(recipients)
         event_loop = asyncio.get_event_loop()
         event_loop.run_until_complete(send_mail(msg, recipients))
 
