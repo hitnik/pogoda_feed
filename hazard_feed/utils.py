@@ -120,6 +120,7 @@ def get_weather_recipients(feed):
     for item in recipients:
         if level.id in item.hazard_levels.all().values_list('id', flat=True):
             recipients_to_send.append(item.email)
+    print(recipients_to_send)
     return recipients_to_send
 
 
