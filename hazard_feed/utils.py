@@ -115,9 +115,10 @@ def make_weather_hazard_message(feed):
 def get_weather_recipients(feed):
     level = feed.hazard_level
     recipients = WeatherRecipients.objects.filter(is_active=True)
+    print(recipients)
     recipients_to_send = []
     for item in recipients:
-        if level in item.hazard_levels.all():
+        if level.id in item.hazard_levels.all().values_list('id', flat=True):
             recipients_to_send.append(item.email)
     return recipients_to_send
 
