@@ -4,11 +4,7 @@ import time
 import datetime
 import pytz
 import requests
-from .models import (
-    HazardLevels, HazardFeeds,
-    WeatherRecipients, EmailTemplates,
-    RSSFeedUrl
-)
+from .models import *
 from django.conf import settings
 import aiosmtplib
 import nltk

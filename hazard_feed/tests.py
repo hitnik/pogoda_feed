@@ -37,6 +37,12 @@ class TestHazardFeeds(TestCase):
 
 
     def test_send_weather_mail(self):
+
+        h1 = HazardLevels.objects.get(id=1)
+        h2 = HazardLevels.objects.get(id=2)
+        h3 = HazardLevels.objects.get(id=3)
+        h4 = HazardLevels.objects.get(id=4)
+
         feed = HazardFeeds.objects.create(
             id=1580800025,
             date=datetime.datetime.utcnow(),
@@ -45,7 +51,7 @@ class TestHazardFeeds(TestCase):
             external_link='http://www.pogoda.by/news/?page=34647',
             summary='Желтый уровень опасности. 5 февраля (среда) на '
                     'отдельных участках дорог республики ожидается гололедица.',
-            hazard_level=HazardLevels.objects.get(id=3),
+            hazard_level=h3,
             is_sent=False
         )
         msg = make_weather_hazard_message(feed)
