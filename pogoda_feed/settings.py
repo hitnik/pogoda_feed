@@ -161,7 +161,7 @@ RQ_QUEUES = {
 }
 
 # email settings from for sending weather email
-WEATHER_EMAIL_FROM = 'Telex OMC <telex@mck.beltelecom.by>'
+WEATHER_EMAIL_FROM = os.getenv('WEATHER_EMAIL_FROM')
 
 
 TINYMCE_JS_URL = STATIC_URL + 'hazard_feed/static/js/tinymce/tinymce.min.js'
