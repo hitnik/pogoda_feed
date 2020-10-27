@@ -103,7 +103,7 @@ def make_weather_hazard_message(feed):
     html = template.render(context)
     soup = BeautifulSoup(html, 'html.parser')
     text = soup.get_text()
-    msg = Message()
+    msg = EmailMessage()
     msg['From'] = str(settings.WEATHER_EMAIL_FROM)
     msg['Subject'] = feed.title
     msg.set_content(text)
