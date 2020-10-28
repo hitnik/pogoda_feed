@@ -35,6 +35,8 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
             email = serializer.validated_data.get('email')
             title = serializer.validated_data.get('title')
             levels = list(serializer.validated_data.get('hazard_levels'))
+            if len(levels) == 0:
+                levels = list(HazardLevels.objects.all().values_list('id', flat=True))
             queryset = self.get_queryset()
             if queryset.filter(email=email).exists():
                 obj = queryset.get(email=email)
