@@ -54,6 +54,7 @@ class TestHazardFeeds(TestCase):
             hazard_level=h3,
             is_sent=False
         )
+
         msg = make_weather_hazard_message(feed)
         recipients = get_weather_recipients(feed)
         event_loop = asyncio.get_event_loop()
