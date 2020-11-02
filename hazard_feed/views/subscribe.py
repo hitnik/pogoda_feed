@@ -45,7 +45,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
                 if obj.is_active:
                     obj.hazard_levels.clear()
                     obj.hazard_levels.add(*levels)
-                    return Response(status=status.HTTP_200_OK)
+                    return self.create_code_response(obj)
                 else:
                     obj.title = title
                     obj.hazard_levels.clear()
