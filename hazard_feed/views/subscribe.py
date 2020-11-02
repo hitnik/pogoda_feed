@@ -155,7 +155,7 @@ class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):
         if queryset is None:
             queryset = self.get_queryset()
 
-        serializer = self.get_serializer(data=self.request.POST)
+        serializer = self.get_serializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data.get('email')
 
