@@ -161,7 +161,6 @@ RQ_QUEUES = {
 }
 
 # email settings from for sending weather email
-WEATHER_EMAIL_FROM = os.getenv('WEATHER_EMAIL_FROM')
 
 
 TINYMCE_JS_URL = STATIC_URL + 'hazard_feed/static/js/tinymce/tinymce.min.js'
@@ -180,5 +179,6 @@ ACTIVATION_CODE_LENTH = 8
 # activation code expiration time in seconds
 CODE_EXPIRATION_TIME = 180
 
+WEATHER_EMAIL_FROM = os.getenv('WEATHER_EMAIL_FROM')
 
 DATE_API = os.environ.get('DATE_API', 'http://127.0.0.1:5000/v1/parse-date')
