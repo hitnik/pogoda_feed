@@ -1,4 +1,6 @@
 from rest_framework import generics, viewsets
+from django.http import Http404
+from rest_framework.exceptions import ValidationError, ParseError
 from hazard_feed.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
@@ -128,6 +130,42 @@ class CodeValidationAPIView(generics.GenericAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
 class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):
-    queryset = WeatherRecipients.objects.all()
-    serializer_class = WeatherRecipientsModelSerializer
-    lookup_field = 'email'
+    http_method_names = [u'trace', u'head', u'options', u'post']
+    queryset = WeatherRecipients.objects.all().filter(is_active=True)
+    serializer_class_response = WeatherRecipientsModelSerializer
+    serializer_class = WeatherRecipientsMailSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.serializer_class_response(self.object)
+        return Response(serializer.data)
+
+    def get_object(self, queryset=None):
+        """
+        Returns the object the view is displaying.
+
+        By default this requires `self.queryset` and a `pk` or `slug` argument
+        in the URLconf, but subclasses can override this to return any object.
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        serializer = self.get_serializer(data=self.request.POST)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email')
+
+        if email is not None:
+            queryset = queryset.filter(email=email)
+
+        try:
+            # Get the single item from the filtered queryset
+            obj = queryset.get()
+        except queryset.model.DoesNotExist:
+            raise Http404("No %(verbose_name)s found matching the query" %
+                          {'verbose_name': queryset.model._meta.verbose_name})
+        return obj
+
+

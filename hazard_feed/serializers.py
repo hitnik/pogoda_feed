@@ -75,7 +75,7 @@ class HazardWarningsSerializer(serializers.HyperlinkedModelSerializer):
             'hazard_level': {'view_name': 'hazard_feed:hazard_levels-detail'},
         }
 
-class WeatherRecipientsModelSerializer(serializers.HyperlinkedModelSerializer):
+class WeatherRecipientsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherRecipients
         fields = ['title', 'email', 'hazard_levels']
