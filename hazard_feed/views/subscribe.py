@@ -146,14 +146,17 @@ class CodeValidationAPIView(generics.GenericAPIView):
             id = data['id']
             if EmailActivationCode.objects.filter(id=id).exists():
                 activation = EmailActivationCode.objects.get(id=id)
-                if activation.is_activate:
-                    message = 'Your newsletter subscription has been activated'
-                else:
-                    message = 'your newsletter subscription has been deactivated'
-                if self.perform_action(activation, code):
-                    serializer = SuccesResponseSerializer(data={'ok':True, 'message': message})
-                    if serializer.is_valid():
-                        return Response(status=status.HTTP_200_OK, data=serializer.data)
+                if activation.is_code_valid(code):
+                    if activation.is_activate:
+                        message = 'Your newsletter subscription has been activated'
+                    else:
+                        message = 'Your newsletter subscription has been deactivated'
+                    if self.perform_action(activation, code):
+                        serializer = SuccesResponseSerializer(data={'ok': True, 'message': message})
+                        if serializer.is_valid():
+                            return Response(status=status.HTTP_200_OK, data=serializer.data)
+            if EditValidationCode.objects.filter(id=id).exists():
+               pass
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
 class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):

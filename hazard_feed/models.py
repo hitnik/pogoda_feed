@@ -137,6 +137,8 @@ class ActivationCodeBaseModel(models.Model):
     def date_expiration(self):
         return (self.date_created + datetime.timedelta(seconds=settings.CODE_EXPIRATION_TIME)).replace(tzinfo=pytz.utc)
 
+    def is_code_valid(self, code):
+        return check_password(code, self.code)
 
     def _make_action(self, code):
         if self.target and hasattr(self.target, 'is_active'):
