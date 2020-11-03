@@ -163,6 +163,7 @@ class Message():
     def __init__(self):
         self.activation_template = Template(EmailTemplates.objects.get(title='activation_code_mail').template)
         self.deactivation_template = Template(EmailTemplates.objects.get(title='deactivation_code_mail').template)
+        self.edit_validate_template = Template(EmailTemplates.objects.get(title='edit_validation_code_mail').template)
 
     @classmethod
     def email_weather_hazard(cls, feed):
@@ -209,6 +210,19 @@ class Message():
     def email_deactivation_code(cls, code):
         return cls()._email_code(code, activate=False)
 
+    @classmethod
+    def email_validate_edit_code(cls, code):
+        template = cls().edit_validate_template
+        context = Context({'code': code})
+        html = template.render(context)
+        soup = BeautifulSoup(html, 'html.parser')
+        text = soup.get_text()
+        msg = EmailMessage()
+        msg['From'] = settings.WEATHER_EMAIL_FROM
+        msg['Subject'] = 'Код подтверждения'
+        msg.set_content(text)
+        msg.add_alternative(html, subtype='html')
+        return msg
 
 def datetime_parser(json_dict):
     for (key, value) in json_dict.items():

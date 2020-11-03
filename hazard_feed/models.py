@@ -162,5 +162,27 @@ class ActivationCodeBaseModel(models.Model):
 class EmailActivationCode(ActivationCodeBaseModel):
     target = models.ForeignKey(WeatherRecipients, null=True, on_delete=models.CASCADE)
 
-# class EmalDeativationCode(EmailActivationCode):
-#     pass
+class WeatherRecipientsEditCandidate(models.Model):
+    title = models.CharField(max_length=64, null=True)
+    valid = models.BooleanField(default=False)
+    hazard_levels = models.ManyToManyField(HazardLevels, blank=True)
+    target = models.OneToOneField(WeatherRecipients,
+                                  on_delete=models.CASCADE,
+                                  primary_key=True
+                                  )
+
+class EditValidationCode(ActivationCodeBaseModel):
+    target = models.ForeignKey(WeatherRecipientsEditCandidate, null=True, on_delete=models.CASCADE)
+
+    # def validate(self, code):
+    #     if self.target and hasattr(self.target, 'valid'):
+    #         if not self._is_expired() and\
+    #                 check_password(code, self.code):
+    #             if self.is_activate:
+    #                 self.target.is_active = True
+    #             else:
+    #                 self.target.is_active = False
+    #             self.target.save()
+    #             self.delete(keep_parents=True)
+    #             return True
+    #     return False

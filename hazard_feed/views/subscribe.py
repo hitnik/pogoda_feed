@@ -1,13 +1,14 @@
 from rest_framework import generics, viewsets
 from django.http import Http404
-from rest_framework.exceptions import ValidationError, ParseError
 from hazard_feed.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from hazard_feed.models import EmailActivationCode, WeatherRecipients
+from hazard_feed.models import (EmailActivationCode, WeatherRecipients,
+                                WeatherRecipientsEditCandidate, EditValidationCode
+                                )
 from django.urls import reverse_lazy
 import jwt
 
@@ -18,20 +19,7 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
     def get_queryset(self):
         return WeatherRecipients.objects.all()
 
-    def create_code_response(self, recipient):
-        code = EmailActivationCode.objects.create(target=recipient, is_activate=True)
-        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
-                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-        data = {'expires': int(code.date_expiration.timestamp() * 1000),
-                'token': token,
-                'code_confirm': reverse_lazy('hazard_feed:code_validate')
-                }
-        response_serializer = SubcribeResponseSerializer(data=data)
-        response_serializer.is_valid()
-        return Response(response_serializer.data, status=status.HTTP_200_OK)
-
-    @csrf_exempt
-    def post(self,request, format=None):
+    def serialized_data(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
@@ -39,28 +27,65 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
             levels = list(serializer.validated_data.get('hazard_levels'))
             if len(levels) == 0:
                 levels = list(HazardLevels.objects.all().values_list('id', flat=True))
-            queryset = self.get_queryset()
-            if queryset.filter(email=email).exists():
-                obj = queryset.get(email=email)
-                if obj.is_active:
-                    obj.hazard_levels.clear()
-                    obj.hazard_levels.add(*levels)
-                    return self.create_code_response(obj)
-                else:
-                    obj.title = title
-                    obj.hazard_levels.clear()
-                    obj.hazard_levels.add(*levels)
-                    obj.save()
-                    return self.create_code_response(obj)
+        return email, title, levels
+
+    def generate_code(self, obj):
+        return EmailActivationCode.objects.create(target=obj, is_activate=True)
+
+    def create_code_response(self, code, confirm_url):
+        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
+                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+        data = {'expires': int(code.date_expiration.timestamp() * 1000),
+                'token': token,
+                'code_confirm': confirm_url
+                }
+        response_serializer = SubcribeResponseSerializer(data=data)
+        response_serializer.is_valid()
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    @csrf_exempt
+    def post(self,request, format=None):
+        email, title, levels = self.serialized_data(request)
+        queryset = self.get_queryset()
+        if queryset.filter(email=email).exists():
+            obj = queryset.get(email=email)
+            if obj.is_active:
+                return Response(status=status.HTTP_302_FOUND)
             else:
-                obj = WeatherRecipients.objects.create(email=email, title=title)
+                obj.title = title
+                obj.hazard_levels.clear()
                 obj.hazard_levels.add(*levels)
                 obj.save()
-                return self.create_code_response(obj)
-            return Response(status=status.HTTP_200_OK)
+                return self.create_code_response(self.generate_code(obj), reverse_lazy('hazard_feed:code_validate'))
+        else:
+            obj = WeatherRecipients.objects.create(email=email, title=title)
+            obj.hazard_levels.add(*levels)
+            obj.save()
+            return self.create_code_response(self.generate_code(obj), reverse_lazy('hazard_feed:code_validate'))
+        return Response(status=status.HTTP_200_OK)
 
 
+class NewsletterSubscribeEditApiView(NewsletterSubscribeAPIView):
 
+    def generate_code(self, obj):
+        return EditValidationCode.objects.create(target=obj)
+
+    @csrf_exempt
+    def post(self, request, format=None):
+        email, title, levels = self.serialized_data(request)
+        queryset = self.get_queryset()
+        if queryset.filter(email=email).exists():
+            obj = queryset.get(email=email)
+            if obj.is_active:
+                if WeatherRecipientsEditCandidate.objects.filter(target__email=email).exists():
+                    WeatherRecipientsEditCandidate.objects.get(target__email=email).delete()
+                candidate = WeatherRecipientsEditCandidate.objects.create(
+                    target=obj,
+                    title=title,
+                )
+                candidate.hazard_levels.add(*levels)
+                return self.create_code_response(self.generate_code(candidate), reverse_lazy('hazard_feed:code_validate'))
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class NewsletterUnsubscribeAPIView(generics.GenericAPIView):

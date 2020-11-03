@@ -33,3 +33,17 @@ def send_activation_mail(sender, instance, created, **kwargs):
             queue = django_rq.get_queue()
             queue.enqueue(send_code_notification, code, recipients, activate=instance.is_activate)
             instance.save()
+
+def send_edit_valid_mail(sender, instance, created, **kwargs):
+    if created:
+        queryset = instance.__class__.objects.filter(target=instance.target)
+        for item in queryset:
+            if not item == instance:
+                item.delete()
+        if hasattr(instance.target.target, 'email'):
+            recipients = [instance.target.target.email]
+            code = instance.code
+            instance.code = make_password(code)
+            queue = django_rq.get_queue()
+            queue.enqueue(send_code_notification, code, recipients, edit=True)
+            instance.save()

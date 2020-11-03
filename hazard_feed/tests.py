@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from .utils import *
 from .config import WEATHER_FEED_URL
-from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 import asyncio
 import django_rq
 from rq_scheduler import Scheduler
@@ -114,20 +114,39 @@ class TestHazardFeeds(TestCase):
         print(feeds)
 
 
-class TestAPI(APITestCase):
+class TestApi(APITestCase):
 
 
     def test_subscribe(self):
-        resp = self.client.post(reverse('hazard_feed:subscribe_newsletter'),
-                                {'title': 'test', 'email':'hitnik@gmail.com'},
+        pass
+
+    def test_subscribe_edit(self):
+        h1 = HazardLevels.objects.get(id=1)
+        h2 = HazardLevels.objects.get(id=2)
+        h3 = HazardLevels.objects.get(id=3)
+        h4 = HazardLevels.objects.get(id=4)
+        test = WeatherRecipients.objects.create(
+            title='test',
+            email='test@test.ru',
+            is_active=True,
+        )
+        test.hazard_levels.add(h4)
+        resp = self.client.post(reverse('hazard_feed:subscribe_edit'),
+                                {'title': 't', 'email': 'test@test.ru', 'hazard_levels': [3, 4]},
                                 format='json')
-        self.assertEqual(resp.status_code, 201)
-        print(resp)
-        resp = self.client.post(reverse('hazard_feed:subscribe_newsletter'),
-                                {'title': 'test', 'email': 'hitnik@gmail.com'},
+        self.assertEqual(resp.status_code, 200)
+        candidate = WeatherRecipientsEditCandidate.objects.get(target__email='test@test.ru')
+        self.assertEqual('t', candidate.title)
+        resp = self.client.post(reverse('hazard_feed:subscribe_edit'),
+                                {'title': 'test', 'email': 'test@test.ru', 'hazard_levels': [3, 4]},
                                 format='json')
-        # self.assertEqual(resp.status_code, 201)
-        print(resp.content)
+        self.assertEqual(resp.status_code, 200)
+        test.is_active = False
+        test.save()
+        resp = self.client.post(reverse('hazard_feed:subscribe_edit'),
+                                {'title': 'test', 'email': 'tes1t@test.ru', 'hazard_levels': [3, 4]},
+                                format='json')
+        self.assertEqual(resp.status_code, 404)
 
 
     def test_code_gen(self):
@@ -149,7 +168,7 @@ class TestUtils(APITestCase):
         self.assertIsNone(date_start)
         self.assertIsNone(date_end)
         date_start, date_end = date_from_text_parser('http://127.0.0.1:5000/v1/parse-date', text)
-        d_s = d_n =  datetime.date(2020, 9, 10)
+        d_s = d_n = datetime.date(2020, 9, 10)
         self.assertEqual(d_s, date_start)
         self.assertEqual(d_n, date_end)
 
