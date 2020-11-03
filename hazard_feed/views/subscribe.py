@@ -102,7 +102,8 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
     def create_code_response(self, recipient):
         code = EmailActivationCode.objects.create(target=recipient, is_activate=False)
         token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
-                           settings.SECRET_KEY, algorithm='HS256')
+                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+
         data = {'expires': int(code.date_expiration.timestamp() * 1000),
                 'token': token,
                 'code_confirm': reverse_lazy('hazard_feed:code_validate')
@@ -150,7 +151,7 @@ class CodeValidationAPIView(generics.GenericAPIView):
                 if activation.is_activate:
                     message = 'Your newsletter subscription has been activated'
                 else:
-                    message = 'your newsletter subscription has been deactivated'
+                    message = 'Your newsletter subscription has been deactivated'
                 if self.perform_action(activation, code):
                     serializer = SuccesResponseSerializer(data={'ok':True, 'message': message})
                     if serializer.is_valid():
@@ -195,5 +196,4 @@ class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):
             raise Http404("No %(verbose_name)s found matching the query" %
                           {'verbose_name': queryset.model._meta.verbose_name})
         return obj
-
 

@@ -10,6 +10,8 @@ from .models import WeatherRecipients
 from  django.urls import reverse
 from rest_framework.test import APIRequestFactory
 from .views import *
+from .serializers import ActivationCodeSerializer
+import jwt
 from rest_framework.test import APITestCase
 import datetime
 
@@ -172,3 +174,14 @@ class TestUtils(APITestCase):
         self.assertEqual(d_s, date_start)
         self.assertEqual(d_n, date_end)
 
+class TestJWT(APITestCase):
+
+    def test_jwt(self):
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        exp = now + datetime.timedelta(seconds=5)
+        token = jwt.encode({'id': '5', 'exp': exp},
+                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+        serializer = ActivationCodeSerializer(data={'code': 12345678, 'token': token })
+        serializer.is_valid()
+        dict = jwt.decode(serializer.validated_data['token'], settings.SECRET_KEY, algorithm='HS256')
+        self.assertEqual('5', dict['id'])
