@@ -1,6 +1,6 @@
 import datetime
 import django_rq
-from .jobs import send_weather_notification, send_code_notification
+from .jobs import send_weather_notification
 from redis.exceptions import ConnectionError
 from django.contrib.auth.hashers import check_password, make_password
 

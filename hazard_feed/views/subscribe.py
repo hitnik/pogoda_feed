@@ -1,5 +1,7 @@
 from rest_framework import generics, viewsets
 from django.http import Http404
+import django_rq
+from redis.exceptions import ConnectionError
 from hazard_feed.serializers import *
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,14 +9,15 @@ from rest_framework.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from hazard_feed.models import (EmailActivationCode, WeatherRecipients,
-                                WeatherRecipientsEditCandidate, EditValidationCode
+                                # WeatherRecipientsEditCandidate, EditValidationCode
                                 )
 from django.urls import reverse_lazy
-import jwt
+from hazard_feed.jobs import send_email_code_activate
 
 
 class NewsletterSubscribeAPIView(generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
+    validate_url = reverse_lazy('hazard_feed:code_validate')
 
     def get_queryset(self):
         return WeatherRecipients.objects.all()
@@ -27,24 +30,29 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
             levels = list(serializer.validated_data.get('hazard_levels'))
             if len(levels) == 0:
                 levels = list(HazardLevels.objects.all().values_list('id', flat=True))
-        return email, title, levels
+            return email, title, levels
 
-    def generate_code(self, obj):
-        return EmailActivationCode.objects.create(target=obj, is_activate=True)
+    def generate_code(self):
+        return EmailActivationCode.objects.create()
 
-    def create_code_response(self, code, confirm_url):
-        token = jwt.encode({'id': code.id.__str__(), 'exp': code.date_expiration},
-                           settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+    def create_code_response(self, code, target):
         data = {'expires': int(code.date_expiration.timestamp() * 1000),
-                'token': token,
-                'code_confirm': confirm_url
+                'target_uid': target.uuid,
+                'code_confirm': self.validate_url
                 }
         response_serializer = SubcribeResponseSerializer(data=data)
         response_serializer.is_valid()
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
+    def send_notify(self, code, recipient):
+        try:
+            queue = django_rq.get_queue()
+            queue.enqueue(send_email_code_activate, code, [recipient])
+        except ConnectionError:
+            send_email_code_activate(code, [recipient])
+
     @csrf_exempt
-    def post(self,request, format=None):
+    def post(self, request, format=None):
         email, title, levels = self.serialized_data(request)
         queryset = self.get_queryset()
         if queryset.filter(email=email).exists():
@@ -55,14 +63,22 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
                 obj.title = title
                 obj.hazard_levels.clear()
                 obj.hazard_levels.add(*levels)
+                if obj.code:
+                    obj.code.delete()
+                code = self.generate_code()
+                obj.code = code
                 obj.save()
-                return self.create_code_response(self.generate_code(obj), reverse_lazy('hazard_feed:code_validate'))
+                self.send_notify(code.code, obj.email)
+                return self.create_code_response(code, obj)
         else:
             obj = WeatherRecipients.objects.create(email=email, title=title)
             obj.hazard_levels.add(*levels)
+            code = self.generate_code()
+            obj.code = code
             obj.save()
-            return self.create_code_response(self.generate_code(obj), reverse_lazy('hazard_feed:code_validate'))
-        return Response(status=status.HTTP_200_OK)
+            self.send_notify(code.code, obj.email)
+            return self.create_code_response(code, obj)
+
 
 
 class NewsletterSubscribeEditApiView(NewsletterSubscribeAPIView):
@@ -125,37 +141,32 @@ class NewsletterUnsubscribeAPIView(generics.GenericAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class CodeValidationAPIView(generics.GenericAPIView):
+class SubscribeValidationAPIView(generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
-    def perform_action(self, instance, code):
-       result = instance.activate_deactivate(code)
-       return result
+    def response_success(self):
+        message = 'Your newsletter subscription has been activated'
+        serializer = SuccesResponseSerializer(data={'ok': True, 'message': message})
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-    @csrf_exempt
-    def post(self, request, format=None):
+    def get_serialized_data(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            try:
-                data = jwt.decode(serializer.data['token'], settings.SECRET_KEY, algorithm='HS256')
-            except jwt.ExpiredSignatureError:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Code is expired'})
-            except jwt.InvalidTokenError:
-
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid token'})
             code = serializer.data['code']
-            id = data['id']
-            if EmailActivationCode.objects.filter(id=id).exists():
-                activation = EmailActivationCode.objects.get(id=id)
-                if activation.is_activate:
-                    message = 'Your newsletter subscription has been activated'
-                else:
-                    message = 'Your newsletter subscription has been deactivated'
-                if self.perform_action(activation, code):
-                    serializer = SuccesResponseSerializer(data={'ok':True, 'message': message})
-                    if serializer.is_valid():
-                        return Response(status=status.HTTP_200_OK, data=serializer.data)
+            uid = serializer.data['target_uid']
+            return code, uid
+
+    @csrf_exempt
+    def post(self, request, format=None):
+        code, uid = self.get_serialized_data(request)
+        try:
+            obj = WeatherRecipients.objects.get(uuid=uid)
+        except WeatherRecipients.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid uid'})
+        if obj.code.is_valid(code):
+           obj.is_active = True
+           return  self.response_success()
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
 class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):

@@ -1,8 +1,7 @@
 import re
 import feedparser
 import time
-import datetime
-import pytz
+import asyncio
 import requests
 from .models import *
 from django.conf import settings
@@ -255,3 +254,8 @@ def remove_hazard_level_from_feed(hazard_level, text):
         if not re.search(hazard_level.title, sentence):
             result += sentence
     return result
+
+def send_email_async(msg, recipients):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(send_mail(msg, recipients))
