@@ -205,6 +205,7 @@ class NewsletterSubscribeEditApiView(NewsletterSubscribeAPIView):
                     title=title,
                 )
                 candidate.hazard_levels.add(*levels)
+                candidate.save()
                 if obj.code:
                     obj.code.delete()
                     obj.code = None
@@ -234,7 +235,7 @@ class EditValidationApiView(SubscribeValidationAPIView):
         if obj.code and obj.code.is_valid(code):
             candidate = WeatherRecipientsEditCandidate.objects.get(target__uuid= uid)
             obj.title = candidate.title
-            obj.hazard_levels.remove()
+            obj.hazard_levels.clear()
             obj.hazard_levels.add(*list(candidate.hazard_levels.all().values_list('id', flat=True)))
             obj.save()
             obj.code.delete()
