@@ -26,6 +26,13 @@ def send_email_code_activate(code, recipients):
    msg = Message.email_activation_code(code)
    send_email_async(msg, recipients)
 
+@job
+def send_email_code_deactivate(code, recipients):
+    msg = Message.email_deactivation_code(code)
+    send_email_async(msg, recipients)
 
-
+@job
+def send_email_code_edit(code, recipients):
+    msg = Message.email_validate_edit_code(code)
+    send_email_async(msg, recipients)
 

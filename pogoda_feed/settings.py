@@ -174,11 +174,17 @@ REST_FRAMEWORK = {
     ]
 }
 
-ACTIVATION_CODE_LENTH = 8
+ACTIVATION_CODE_LENTH = 6
 
 # activation code expiration time in seconds
 CODE_EXPIRATION_TIME = 180
 
-WEATHER_EMAIL_FROM = os.getenv('WEATHER_EMAIL_FROM')
+WEATHER_EMAIL_FROM = os.getenv('WEATHER_EMAIL_FROM', 'Telex OMC <telex@mck.beltelecom.by>')
+
+WEATHER_EMAIL_SMTP_HOST = '10.254.10.250'
+WEATHER_USE_TSL = 0
+WEATHER_EMAIL_SMTP_PORT = 587
+WEATHER_EMAIL_HOST_USER = 'telex@mck.beltelecom.by'
+WEATHER_EMAIL_HOST_PASSWORD = 'ODO_2018'
 
 DATE_API = os.environ.get('DATE_API', 'http://127.0.0.1:5000/v1/parse-date')

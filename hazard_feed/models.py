@@ -152,11 +152,11 @@ class EmailTemplates(models.Model):
         verbose_name_plural = _('Email Templates')
 
 
-# class WeatherRecipientsEditCandidate(models.Model):
-#     title = models.CharField(max_length=64, null=True)
-#     valid = models.BooleanField(default=False)
-#     hazard_levels = models.ManyToManyField(HazardLevels, blank=True)
-#     target = models.OneToOneField(WeatherRecipients,
-#                                   on_delete=models.CASCADE,
-#                                   primary_key=True
-#                                   )
+class WeatherRecipientsEditCandidate(models.Model):
+    title = models.CharField(max_length=64, null=True)
+    valid = models.BooleanField(default=False)
+    hazard_levels = models.ManyToManyField(HazardLevels, blank=True)
+    target = models.OneToOneField(WeatherRecipients,
+                                  on_delete=models.CASCADE,
+                                  primary_key=True
+                                  )
