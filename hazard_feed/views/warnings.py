@@ -33,5 +33,4 @@ class HazardWarningsAPIViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = DateFilterSet
 
 
-# class HazardWarnings
 
