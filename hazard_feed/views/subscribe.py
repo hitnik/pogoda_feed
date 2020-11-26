@@ -14,9 +14,15 @@ from django.urls import reverse_lazy
 from hazard_feed.jobs import (send_email_code_activate, send_email_code_deactivate,
                               send_email_code_edit,
                               )
+from django.utils.decorators import method_decorator
+
+class CSRFExemptMixin(object):
+   @method_decorator(csrf_exempt)
+   def dispatch(self, *args, **kwargs):
+       return super(CSRFExemptMixin, self).dispatch(*args, **kwargs)
 
 
-class NewsletterSubscribeAPIView(generics.GenericAPIView):
+class NewsletterSubscribeAPIView(CSRFExemptMixin, generics.GenericAPIView):
     serializer_class = SubscribeSerialiser
     validate_url = reverse_lazy('hazard_feed:validate_subscribe')
 
@@ -80,7 +86,8 @@ class NewsletterSubscribeAPIView(generics.GenericAPIView):
             self.send_notify(code.code, obj.email)
             return self.create_code_response(code, obj)
 
-class NewsletterUnsubscribeAPIView(NewsletterSubscribeAPIView):
+
+class NewsletterUnsubscribeAPIView(CSRFExemptMixin, NewsletterSubscribeAPIView):
     serializer_class = WeatherRecipientsMailSerializer
     validate_url = reverse_lazy('hazard_feed:validate_unsubscribe')
 
@@ -124,7 +131,7 @@ class NewsletterUnsubscribeAPIView(NewsletterSubscribeAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class SubscribeValidationAPIView(generics.GenericAPIView):
+class SubscribeValidationAPIView(CSRFExemptMixin, generics.GenericAPIView):
     serializer_class = ActivationCodeSerializer
 
     def response_success(self):
@@ -156,7 +163,7 @@ class SubscribeValidationAPIView(generics.GenericAPIView):
             return  self.response_success()
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
-class UnsubscribeValidationApiView(SubscribeValidationAPIView):
+class UnsubscribeValidationApiView(CSRFExemptMixin, SubscribeValidationAPIView):
 
     def response_success(self):
         message = 'Подписка на рассылку деактивирована'
@@ -181,7 +188,7 @@ class UnsubscribeValidationApiView(SubscribeValidationAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
 
-class NewsletterSubscribeEditApiView(NewsletterSubscribeAPIView):
+class NewsletterSubscribeEditApiView(CSRFExemptMixin, NewsletterSubscribeAPIView):
     validate_url = reverse_lazy('hazard_feed:validate_edit')
 
     def send_notify(self, code, recipient):
@@ -217,7 +224,7 @@ class NewsletterSubscribeEditApiView(NewsletterSubscribeAPIView):
         return Response(status=status.HTTP_404_NOT_FOUND, data={'Error': 'Email is not registered'})
 
 
-class EditValidationApiView(SubscribeValidationAPIView):
+class EditValidationApiView(CSRFExemptMixin, SubscribeValidationAPIView):
 
     def response_success(self):
         message = 'Параметры подписки успешно изменены'
@@ -245,7 +252,8 @@ class EditValidationApiView(SubscribeValidationAPIView):
             return self.response_success()
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'Error': 'Invalid Code'})
 
-class WeatherRecipientsRetrieveAPIView(generics.RetrieveAPIView):
+
+class WeatherRecipientsRetrieveAPIView(CSRFExemptMixin, generics.RetrieveAPIView):
     http_method_names = [u'trace', u'head', u'options', u'post']
     queryset = WeatherRecipients.objects.all().filter(is_active=True)
     serializer_class_response = WeatherRecipientsModelSerializer
