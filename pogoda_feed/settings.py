@@ -81,6 +81,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pogoda_feed.wsgi.application'
 
+#ASGI support
+ASGI_APPLICATION = 'pogoda_feed.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
