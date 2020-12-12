@@ -85,14 +85,24 @@ WSGI_APPLICATION = 'pogoda_feed.wsgi.application'
 ASGI_APPLICATION = 'pogoda_feed.asgi.application'
 
 #channels redis
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(os.getenv('REDIS_HOST', '127.0.0.1'), os.getenv('REDIS_PORT', 6379))],
+
+if DEBUG:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [(os.getenv('REDIS_HOST', '127.0.0.1'), os.getenv('REDIS_PORT', 6379))],
+            },
         },
-    },
-}
+    }
+
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
