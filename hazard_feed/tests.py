@@ -15,6 +15,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
@@ -188,7 +189,7 @@ class TestJWT(APITestCase):
         self.assertEqual('5', dict['id'])
 
 
-class ChatTests(ChannelsLiveServerTestCase):
+class WSTests(ChannelsLiveServerTestCase):
     serve_static = True  # emulate StaticLiveServerTestCase
 
     @classmethod
@@ -196,7 +197,11 @@ class ChatTests(ChannelsLiveServerTestCase):
         super().setUpClass()
         try:
             # NOTE: Requires "chromedriver" binary to be installed in $PATH
-            cls.driver = webdriver.Chrome()
+            dc = DesiredCapabilities.CHROME
+            dc['goog:loggingPrefs'] = {'browser': 'ALL'}
+
+            path = '/usr/local/bin/chromedriver'
+            cls.driver = webdriver.Chrome(path, desired_capabilities=dc)
         except:
             super().tearDownClass()
             raise
@@ -236,17 +241,17 @@ class ChatTests(ChannelsLiveServerTestCase):
 
     def _close_all_new_windows(self):
         while len(self.driver.window_handles) > 1:
-            self.driver.switch_to_window(self.driver.window_handles[-1])
+            self.driver.switch_to.window(self.driver.window_handles[-1])
             self.driver.execute_script('window.close();')
         if len(self.driver.window_handles) == 1:
-            self.driver.switch_to_window(self.driver.window_handles[0])
+            self.driver.switch_to.window(self.driver.window_handles[0])
 
     def _switch_to_window(self, window_index):
-        self.driver.switch_to_window(self.driver.window_handles[window_index])
+        self.driver.switch_to.window(self.driver.window_handles[window_index])
 
     def _post_message(self, message):
         ActionChains(self.driver).send_keys(message + '\n').perform()
 
     @property
     def _chat_log_value(self):
-        return self.driver.get_log('browser')
+        return self.driver.find_element_by_css_selector('#chat-log').get_property('value')
