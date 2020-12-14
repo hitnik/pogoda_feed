@@ -30,7 +30,7 @@ class TestConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.group_name,
             {
-                'type': 'ch_message',
+                'type': 'ch.message',
                 'message': message
             }
         )

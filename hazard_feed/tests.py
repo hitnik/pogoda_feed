@@ -16,6 +16,8 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
@@ -213,11 +215,20 @@ class WSTests(ChannelsLiveServerTestCase):
 
     def test_when_chat_message_posted_then_seen_by_everyone_in_same_room(self):
         try:
+            channel_layer = get_channel_layer()
+
             self._enter_url()
 
             self._open_new_window()
             self._enter_url()
 
+            # async_to_sync(channel_layer.group_send)(
+            #     'weather_hazard',
+            #     {
+            #         'type': 'ch.message',
+            #         'message': 'hello'
+            #     }
+            # )
             self._switch_to_window(0)
             self._post_message('hello')
             WebDriverWait(self.driver, 2).until(lambda _:
