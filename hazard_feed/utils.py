@@ -4,7 +4,7 @@ import time
 import asyncio
 import requests
 from .models import *
-from .serializers import HazardWarningsSerializer
+from .serializers import HazardWarningsWSSerializer
 from django.conf import settings
 import aiosmtplib
 import nltk
@@ -262,11 +262,12 @@ def send_email_async(msg, recipients):
     loop.run_until_complete(send_mail(msg, recipients))
 
 
-def get_actial_hazard_feeds():
+def get_actial_hazard_feeds() -> json:
     date = datetime.datetime.now().date()
     feeds = HazardFeeds.objects.filter(date_start__gte=date, date_end__gte=date)
 
-    return feeds
+    serializer = HazardWarningsWSSerializer(feeds, many=True)
+    return json.dumps(serializer.data,ensure_ascii=False)
 
 
 

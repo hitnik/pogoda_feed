@@ -20,6 +20,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
 
+
 class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
 
@@ -263,26 +264,20 @@ class WSTests(ChannelsLiveServerTestCase):
             self._open_new_window()
             self._enter_url()
 
+            # async_to_sync(channel_layer.group_send)(
+            #     'weather_hazard',
+            #     {
+            #         'type': 'ch.message',
+            #         'message': 'hello'
+            #     }
+            # )
             self._switch_to_window(0)
-
-            time.sleep(5)
-
-            async_to_sync(channel_layer.group_send)(
-                'weather_hazard',
-                {
-                    'type': 'ch.message',
-                    'message': 'hello'
-                }
-            )
-
-            time.sleep()
-
-            # self._post_message('hello')
-            WebDriverWait(self.driver, 5).until(lambda _:
+            self._post_message('hello')
+            WebDriverWait(self.driver, 2).until(lambda _:
                 'hello' in self._chat_log_value,
                 'Message was not received by window 1 from window 1')
             self._switch_to_window(1)
-            WebDriverWait(self.driver, 5).until(lambda _:
+            WebDriverWait(self.driver, 2).until(lambda _:
                 'hello' in self._chat_log_value,
                 'Message was not received by window 2 from window 1')
         finally:

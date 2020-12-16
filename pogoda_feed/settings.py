@@ -115,7 +115,7 @@ DATABASES = {
         'HOST': os.environ.get('SQL_HOST', 'localhost'),
         'PORT': os.environ.get('SQL_PORT'),
         'TEST': {
-            'NAME': 'testdb.sqlite3'
+            'NAME': os.path.join(BASE_DIR, "db_test.sqlite3")
         }
     }
 }

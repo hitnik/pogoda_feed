@@ -82,3 +82,11 @@ class WeatherRecipientsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherRecipients
         fields = ['title', 'email', 'hazard_levels']
+
+class HazardWarningsWSSerializer(serializers.ModelSerializer):
+    hazard_level = HazardLevelModelSerializer(read_only=True)
+
+    class Meta:
+        model = HazardFeeds
+        fields = ['id', 'title', 'external_link', 'summary',
+                  'hazard_level', 'date_start', 'date_end']
