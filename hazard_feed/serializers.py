@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import WeatherRecipients, HazardFeeds, HazardLevels
 from django.conf import settings
 from django.core.validators import EmailValidator
-from django.db.utils import OperationalError, ProgrammingError
 
 class WeatherRecipientsMailSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True, allow_blank=False)

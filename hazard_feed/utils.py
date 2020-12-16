@@ -4,6 +4,7 @@ import time
 import asyncio
 import requests
 from .models import *
+from .serializers import HazardWarningsSerializer
 from django.conf import settings
 import aiosmtplib
 import nltk
@@ -18,7 +19,7 @@ from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from .config import WEATHER_FEED_URL
 from django.contrib.sessions.models import Session
-
+from .models import HazardFeeds
 
 def hazard_level_in_text_find(text):
     """
@@ -259,3 +260,13 @@ def send_email_async(msg, recipients):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(send_mail(msg, recipients))
+
+
+def get_actial_hazard_feeds():
+    date = datetime.datetime.now().date()
+    feeds = HazardFeeds.objects.filter(date_start__gte=date, date_end__gte=date)
+
+    return feeds
+
+
+

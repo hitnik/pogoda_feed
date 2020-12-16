@@ -18,6 +18,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+import random
 
 class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
@@ -31,6 +32,7 @@ class TestHazardFeeds(TestCase):
         f = HazardFeeds.objects.all()
         for item in f:
             print(item.summary)
+
             print(item.date_start)
             print(item.date_end)
 
@@ -160,6 +162,7 @@ class TestApi(APITestCase):
                                 {"code": "12345678"}, format='json')
         print(resp.content)
 
+
 class TestUtils(APITestCase):
     fixtures = ['hazard_levels']
 
@@ -177,6 +180,44 @@ class TestUtils(APITestCase):
         d_s = d_n = datetime.date(2020, 9, 10)
         self.assertEqual(d_s, date_start)
         self.assertEqual(d_n, date_end)
+
+
+    def test_get_actual_hazard_feeds(self):
+
+        date_yesterday = datetime.datetime.now().date()-datetime.timedelta(days=1)
+        date_now = datetime.datetime.now().date()
+        date_tommorow = datetime.datetime.now().date()+datetime.timedelta(days=1)
+
+        dates_list = (date_tommorow, date_now, date_yesterday)
+
+        for i in range(1,11):
+            index = random.randint(0,2)
+            date_start = date_end = dates_list[index]
+
+            if i % 2 == 0 and index < len(dates_list)-1:
+                date_end = dates_list[index+1]
+
+            feed = HazardFeeds.objects.create(
+                id=i,
+                date=datetime.datetime.utcnow(),
+                date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
+                title='Предупреждение о неблагоприятном явлении',
+                external_link='http://www.pogoda.by/news/?page=34647',
+                summary=date_start.strftime('%d %b'),
+                hazard_level=HazardLevels.objects.get(id=3),
+                is_sent=True,
+                date_start=date_start,
+                date_end=date_end
+            )
+
+        feeds = get_actial_hazard_feeds()
+
+        print(len(feeds))
+
+        for feed in feeds:
+            self.assertEqual(feed.summary, feed.date_start.strftime('%d %b'))
+
+
 
 class TestJWT(APITestCase):
 
@@ -222,20 +263,26 @@ class WSTests(ChannelsLiveServerTestCase):
             self._open_new_window()
             self._enter_url()
 
-            # async_to_sync(channel_layer.group_send)(
-            #     'weather_hazard',
-            #     {
-            #         'type': 'ch.message',
-            #         'message': 'hello'
-            #     }
-            # )
             self._switch_to_window(0)
-            self._post_message('hello')
-            WebDriverWait(self.driver, 2).until(lambda _:
+
+            time.sleep(5)
+
+            async_to_sync(channel_layer.group_send)(
+                'weather_hazard',
+                {
+                    'type': 'ch.message',
+                    'message': 'hello'
+                }
+            )
+
+            time.sleep()
+
+            # self._post_message('hello')
+            WebDriverWait(self.driver, 5).until(lambda _:
                 'hello' in self._chat_log_value,
                 'Message was not received by window 1 from window 1')
             self._switch_to_window(1)
-            WebDriverWait(self.driver, 2).until(lambda _:
+            WebDriverWait(self.driver, 5).until(lambda _:
                 'hello' in self._chat_log_value,
                 'Message was not received by window 2 from window 1')
         finally:
