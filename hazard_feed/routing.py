@@ -3,6 +3,5 @@ from django.urls import re_path
 from . import consumers
 
 websocket_urlpatterns = [
-    re_path(r'ws/$', consumers.TestConsumer.as_asgi()),
-    re_path(r'ws/weather$', consumers.TestJsonConsumer.as_asgi()),
+    re_path(r'ws/weather$', consumers.WeatherJsonConsumer.as_asgi()),
 ]
