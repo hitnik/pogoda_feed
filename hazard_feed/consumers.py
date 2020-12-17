@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
-from .utils import  get_actial_hazard_feeds
+from .utils import get_actial_hazard_feeds
+
 class TestConsumer(AsyncWebsocketConsumer):
     group_name = 'weather_hazard'
 
@@ -65,10 +66,12 @@ class TestJsonConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        feeds = await get_actial_hazard_feeds()
+
         await self.channel_layer.send(self.channel_name,
             {
                 'type': 'weather.notify',
-                'content': {'message': 'start consumer'}
+                'content': feeds
             }
         )
 

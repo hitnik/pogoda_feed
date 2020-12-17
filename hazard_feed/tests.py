@@ -4,7 +4,7 @@ from .config import WEATHER_FEED_URL
 import asyncio
 import django_rq
 from rq_scheduler import Scheduler
-from .jobs import parse_feeds
+from .jobs import parse_feeds, send_weather_notification
 from .models import WeatherRecipients
 from django.urls import reverse
 from .serializers import ActivationCodeSerializer
@@ -78,13 +78,14 @@ class TestHazardFeeds(TestCase):
                                func=parse_feeds,
                                interval=60
                                )
+
     def test_notify_signal(self):
         feed = HazardFeeds.objects.create(
             id=1580800025,
             date=datetime.datetime.utcnow(),
             date_modified=datetime.datetime.utcnow()+datetime.timedelta(minutes=5),
             title='Предупреждение о неблагоприятном явлении',
-            link='http://www.pogoda.by/news/?page=34647',
+            external_link='http://www.pogoda.by/news/?page=34647',
             summary='Желтый уровень опасности. 5 февраля (среда) на '
                     'отдельных участках дорог республики ожидается гололедица.',
             hazard_level=HazardLevels.objects.get(id=3),
@@ -98,19 +99,31 @@ class TestHazardFeeds(TestCase):
         self.assertIsInstance(get_weather_recipients(), list)
 
     def test_templated_msg(self):
+        h1 = HazardLevels.objects.get(id=1)
+        h2 = HazardLevels.objects.get(id=2)
+        h3 = HazardLevels.objects.get(id=3)
+        h4 = HazardLevels.objects.get(id=4)
+
         feed = HazardFeeds(
             id=1580800025,
             date=datetime.datetime.utcnow(),
             date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
             title='Предупреждение о неблагоприятном явлении',
-            link='http://www.pogoda.by/news/?page=34647',
+            external_link='http://www.pogoda.by/news/?page=34647',
             summary='Желтый уровень опасности. 5 февраля (среда) на '
                     'отдельных участках дорог республики ожидается гололедица.',
             hazard_level=HazardLevels.objects.get(id=3),
             is_sent=False
         )
+        recipient = WeatherRecipients.objects.create(
+            email='',
+            title='',
+            is_active=True,
+        )
+        recipient.hazard_levels.set((h2, h3, h4))
+        recipient.save()
         feed.save()
-
+        send_weather_notification(feed)
 
     def test_url_not_rss(self):
        print(len(parse_weather_feeds('sfsdf','http://tut.by')))
@@ -255,29 +268,53 @@ class WSTests(ChannelsLiveServerTestCase):
         cls.driver.quit()
         super().tearDownClass()
 
-    def test_when_chat_message_posted_then_seen_by_everyone_in_same_room(self):
+    def test_when_ws_group_send(self):
         try:
-            channel_layer = get_channel_layer()
+            h1 = HazardLevels.objects.get(id=1)
+            h2 = HazardLevels.objects.get(id=2)
+            h3 = HazardLevels.objects.get(id=3)
+            h4 = HazardLevels.objects.get(id=4)
+
+            date_now = datetime.datetime.now().date()
+
+            feed = HazardFeeds.objects.create(
+                id=1580800025,
+                date=datetime.datetime.utcnow(),
+                date_modified=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
+                title='Предупреждение о неблагоприятном явлении',
+                external_link='http://www.pogoda.by/news/?page=34647',
+                summary=date_now.strftime('%d %b'),
+                hazard_level=HazardLevels.objects.get(id=3),
+                is_sent=True,
+                date_start=date_now,
+                date_end=date_now
+            )
+
+            recipient = WeatherRecipients.objects.create(
+                email='',
+                title='',
+                is_active=True,
+            )
+
+            recipient.hazard_levels.set((h2, h3, h4))
+            recipient.save()
+            feed.save()
+
 
             self._enter_url()
 
             self._open_new_window()
             self._enter_url()
 
-            async_to_sync(channel_layer.group_send)(
-                'weather',
-                {
-                    'type': 'weather.notify',
-                    'content': {'message':'hello'}
-                }
-            )
+            send_weather_notification(feed)
+
             self._switch_to_window(0)
             WebDriverWait(self.driver, 2).until(lambda _:
-                'hello' in self._chat_log_value,
+                date_now.strftime('%d %b') in self._chat_log_value,
                 'Message was not received by window 1 from window 1')
             self._switch_to_window(1)
             WebDriverWait(self.driver, 2).until(lambda _:
-                'hello' in self._chat_log_value,
+                date_now.strftime('%d %b') in self._chat_log_value,
                 'Message was not received by window 2 from window 1')
             time.sleep(3)
         finally:

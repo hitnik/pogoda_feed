@@ -21,6 +21,8 @@ from .config import WEATHER_FEED_URL
 from django.contrib.sessions.models import Session
 from .models import HazardFeeds
 from channels.db import database_sync_to_async
+from channels.layers import get_channel_layer
+from asgiref.sync import sync_to_async
 
 def hazard_level_in_text_find(text):
     """
@@ -270,11 +272,25 @@ def send_email_async(msg, recipients):
 def get_feeds_from_db():
     date = datetime.datetime.now().date()
     feeds = HazardFeeds.objects.filter(date_start__gte=date, date_end__gte=date)
+    serializer = HazardWarningsWSSerializer(feeds, many=True)
+    return serializer.data
 
 async def get_actial_hazard_feeds() -> json:
-    feeds = await get_feeds_from_db
-    serializer = HazardWarningsWSSerializer(feeds, many=True)
-    return json.dumps(serializer.data, ensure_ascii=False)
+    return await get_feeds_from_db()
+
+
+async def send_weather_ws():
+    content = await get_actial_hazard_feeds()
+    print(content)
+    layer = get_channel_layer()
+    await layer.group_send(
+        'weather',
+        {
+            'type': 'weather.notify',
+            'content': content
+        }
+    )
+
 
 
 
