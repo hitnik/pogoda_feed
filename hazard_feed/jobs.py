@@ -17,9 +17,11 @@ def parse_feeds():
 def send_weather_notification(feed):
     recipients = get_weather_recipients(feed)
     msg = Message.email_weather_hazard(feed)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(send_mail(msg, recipients))
+    # loop = asyncio.new_event_loop()
+    # asyncio.set_event_loop(loop)
+    # loop.run_until_complete(send_mail(msg, recipients))
+    asyncio.gather(send_mail(msg, recipients),)
+
 
 @job
 def send_email_code_activate(code, recipients):

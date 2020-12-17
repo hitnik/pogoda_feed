@@ -1,11 +1,6 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-import datetime
-import requests
-from django.urls import reverse
-from urllib.parse import urlunsplit
-
-
+from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
+from .utils import  get_actial_hazard_feeds
 class TestConsumer(AsyncWebsocketConsumer):
     group_name = 'weather_hazard'
 
@@ -17,6 +12,9 @@ class TestConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+
+        content = await get_actial_hazard_feeds()
+
         await self.channel_layer.send(self.channel_name,
             {
                 'type': 'ch.message',
@@ -54,3 +52,37 @@ class TestConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+
+
+class TestJsonConsumer(AsyncJsonWebsocketConsumer):
+    group_name = 'weather'
+
+    async def connect(self):
+
+        # Join group
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name
+        )
+        await self.accept()
+        await self.channel_layer.send(self.channel_name,
+            {
+                'type': 'weather.notify',
+                'content': {'message': 'start consumer'}
+            }
+        )
+
+    async def disconnect(self, close_code):
+        # Leave group
+        await self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name
+        )
+
+    # Receive message from room group
+    async def weather_notify(self, event):
+        content = event['content']
+        print("EVENT TRIGERED")
+
+        # Send message to WebSocket
+        await self.send_json(content=content)

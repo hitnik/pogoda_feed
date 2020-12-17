@@ -15,7 +15,7 @@
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/'
+            + '/ws/weather'
         );
 
         chatSocket.onmessage = function(e) {

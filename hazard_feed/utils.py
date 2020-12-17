@@ -20,6 +20,7 @@ from django.core.exceptions import ValidationError
 from .config import WEATHER_FEED_URL
 from django.contrib.sessions.models import Session
 from .models import HazardFeeds
+from channels.db import database_sync_to_async
 
 def hazard_level_in_text_find(text):
     """
@@ -224,6 +225,7 @@ class Message():
         msg.add_alternative(html, subtype='html')
         return msg
 
+
 def datetime_parser(json_dict):
     for (key, value) in json_dict.items():
         try:
@@ -231,6 +233,7 @@ def datetime_parser(json_dict):
         except (ValueError, AttributeError):
             pass
     return json_dict
+
 
 def date_from_text_parser(url, text):
     try:
@@ -256,18 +259,23 @@ def remove_hazard_level_from_feed(hazard_level, text):
             result += sentence
     return result
 
+
 def send_email_async(msg, recipients):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(send_mail(msg, recipients))
 
 
-def get_actial_hazard_feeds() -> json:
+@database_sync_to_async
+def get_feeds_from_db():
     date = datetime.datetime.now().date()
     feeds = HazardFeeds.objects.filter(date_start__gte=date, date_end__gte=date)
 
+async def get_actial_hazard_feeds() -> json:
+    feeds = await get_feeds_from_db
     serializer = HazardWarningsWSSerializer(feeds, many=True)
-    return json.dumps(serializer.data,ensure_ascii=False)
+    return json.dumps(serializer.data, ensure_ascii=False)
+
 
 
 
