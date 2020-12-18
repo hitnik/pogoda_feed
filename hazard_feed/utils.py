@@ -273,6 +273,8 @@ def get_feeds_from_db():
     date = datetime.datetime.now().date()
     feeds = HazardFeeds.objects.filter(date_start__gte=date, date_end__gte=date)
     serializer = HazardWarningsWSSerializer(feeds, many=True)
+    if not serializer.data:
+        return None
     return serializer.data
 
 async def get_actial_hazard_feeds() -> json:
@@ -281,15 +283,15 @@ async def get_actial_hazard_feeds() -> json:
 
 async def send_weather_ws():
     content = await get_actial_hazard_feeds()
-    print(content)
-    layer = get_channel_layer()
-    await layer.group_send(
-        'weather',
-        {
-            'type': 'weather.notify',
-            'content': content
-        }
-    )
+    if content:
+        layer = get_channel_layer()
+        await layer.group_send(
+            'weather',
+            {
+                'type': 'weather.notify',
+                'content': content
+            }
+        )
 
 
 

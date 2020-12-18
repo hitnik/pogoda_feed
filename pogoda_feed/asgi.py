@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/asgi/
 
 from .wsgi import *
 import os
+
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 import hazard_feed.routing
-from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pogoda_feed.settings')
 

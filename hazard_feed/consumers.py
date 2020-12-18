@@ -14,13 +14,13 @@ class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
         )
         await self.accept()
         feeds = await get_actial_hazard_feeds()
-
-        await self.channel_layer.send(self.channel_name,
-            {
-                'type': 'weather.notify',
-                'content': feeds
-            }
-        )
+        if feeds:
+            await self.channel_layer.send(self.channel_name,
+                {
+                    'type': 'weather.notify',
+                    'content': feeds
+                }
+            )
 
     async def disconnect(self, close_code):
         # Leave group
