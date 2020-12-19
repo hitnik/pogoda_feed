@@ -17,7 +17,6 @@ coreapi==2.3.3
 coreschema==0.0.4
 croniter==0.3.36
 cryptography==3.3.1
-daphne==3.0.1
 Django==3.1.4
 django-cors-headers==3.5.0
 django-filter==2.4.0

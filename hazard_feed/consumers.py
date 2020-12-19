@@ -21,6 +21,13 @@ class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
                     'content': feeds
                 }
             )
+        else:
+            await self.channel_layer.send(self.channel_name,
+              {
+                  'type': 'weather.notify',
+                  'content': [{'summary':'ok'}]
+              }
+              )
 
     async def disconnect(self, close_code):
         # Leave group
