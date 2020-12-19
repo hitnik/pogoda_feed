@@ -17,6 +17,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 croniter==0.3.36
 cryptography==3.3.1
+daphne==3.0.1
 Django==3.1.4
 django-cors-headers==3.5.0
 django-filter==2.4.0
@@ -25,11 +26,13 @@ django-tinymce==3.2.0
 djangorestframework==3.12.2
 drf-spectacular==0.11.1
 feedparser==6.0.2
+gunicorn==20.0.4
 h11==0.8.1
 h2==3.2.0
 hiredis==1.1.0
 hpack==3.0.0
 http3==0.6.7
+httptools==0.1.1
 hyperframe==5.2.0
 hyperlink==20.0.1
 idna==2.10
@@ -79,5 +82,7 @@ txaio==20.4.1
 uritemplate==3.0.1
 urllib3==1.26.2
 uvicorn==0.13.1
+uvloop==0.14.0
+websockets==8.1
 whitenoise==5.2.0
 zope.interface==5.2.0
