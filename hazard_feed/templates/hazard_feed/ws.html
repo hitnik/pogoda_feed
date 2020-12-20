@@ -22,7 +22,10 @@
             const data = JSON.parse(e.data);
             let text = '';
             if (data.payload){
-                text = data.payload;
+                const pay = data.payload
+                if (pay[0].summary){
+                    text = pay[0].summary;
+                }else text = data.payload;
             }else text = data.response;
             document.querySelector('#chat-log').value += (text + '\n');
         };

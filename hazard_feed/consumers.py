@@ -3,6 +3,18 @@ from .utils import get_actial_hazard_feeds
 
 
 class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
+    """
+    Websocket works with nex scheme:
+        - When socket connected client receive {'response':'ok'}.
+        - For nginx keep alive connection (it keep 60 seconds)
+        implemented ping option: from client you can send
+        {'payload':'ping'} and as a response server will send
+        {'response':'ok', 'payload':'pong'}.
+        - If you want to get actual weather hazard feeds, you
+        would send to server {'payload':'feeds'}. Response will
+        be like {'response':'ok', 'payload:': <list of actual feeds>}
+
+    """
     group_name = 'weather'
     response = {'response': 'ok'}
     ping_response = dict(response, payload='pong')
@@ -54,8 +66,9 @@ class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
         # send weather message to socket
 
         feeds = await get_actial_hazard_feeds()
+        print(feeds)
         if feeds:
-            response = dict(self.response, **feeds)
+            response = dict(self.response, payload=feeds)
         else:
             response = self.empty_response
 

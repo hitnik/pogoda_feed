@@ -291,8 +291,8 @@ class WSTests(ChannelsLiveServerTestCase):
             )
 
             recipient = WeatherRecipients.objects.create(
-                email='',
-                title='',
+                email='hitnik@gmail.com',
+                title='hitnik',
                 is_active=True,
             )
 
@@ -306,21 +306,33 @@ class WSTests(ChannelsLiveServerTestCase):
             self._open_new_window()
             self._enter_url()
 
-            send_weather_notification(feed)
 
             self._switch_to_window(0)
+
+            self._post_message('ping')
+
             WebDriverWait(self.driver, 2).until(lambda _:
-                date_now.strftime('%d %b') in self._chat_log_value,
+                'pong' in self._chat_log_value,
                 'Message was not received by window 1 from window 1')
+
+
+
             self._switch_to_window(1)
-            WebDriverWait(self.driver, 2).until(lambda _:
+
+            self._post_message('feeds')
+
+            WebDriverWait(self.driver, 20).until(lambda _:
                 date_now.strftime('%d %b') in self._chat_log_value,
                 'Message was not received by window 2 from window 1')
-            time.sleep(3)
+
+            time.sleep(20)
         finally:
             self._close_all_new_windows()
 
     # === Utility ===
+
+    def _post_message(self, message):
+        ActionChains(self.driver).send_keys(message + '\n').perform()
 
     def _enter_url(self):
         self.driver.get(self.live_server_url + reverse('hazard_feed:ws_test'))
