@@ -282,7 +282,10 @@ async def get_actial_hazard_feeds() -> json:
 
 
 async def send_weather_ws():
-    content = await get_actial_hazard_feeds()
+    content = {'response': 'ok'}
+    payload = await get_actial_hazard_feeds()
+    content.update({'payload': payload})
+
     if content:
         layer = get_channel_layer()
         await layer.group_send(

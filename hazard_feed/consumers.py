@@ -4,6 +4,9 @@ from .utils import get_actial_hazard_feeds
 
 class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
     group_name = 'weather'
+    response = {'response': 'ok'}
+    ping_response = dict(response, payload='pong')
+
 
     async def connect(self):
 
@@ -13,21 +16,13 @@ class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-        feeds = await get_actial_hazard_feeds()
-        if feeds:
-            await self.channel_layer.send(self.channel_name,
-                {
-                    'type': 'weather.notify',
-                    'content': feeds
-                }
-            )
-        else:
-            await self.channel_layer.send(self.channel_name,
-              {
-                  'type': 'weather.notify',
-                  'content': [{'summary':'ok'}]
-              }
-              )
+
+        await self.channel_layer.send(self.channel_name,
+            {
+              'type': 'weather.notify',
+              'content': self.ping_response
+            }
+        )
 
     async def disconnect(self, close_code):
         # Leave group
@@ -36,7 +31,6 @@ class WeatherJsonConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name
         )
 
-    # Receive message from room group
     async def weather_notify(self, event):
         content = event['content']
 

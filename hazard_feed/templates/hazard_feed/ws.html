@@ -20,7 +20,11 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data[0].summary + '\n');
+            let text = '';
+            if (data.payload){
+                text = data.payload;
+            }else text = data.response;
+            document.querySelector('#chat-log').value += (text + '\n');
         };
 
         chatSocket.onclose = function(e) {
