@@ -21,8 +21,8 @@ class HazardFeedConfig(AppConfig):
     WEATHER_EMAIL_SMTP_HOST = 'smtp.gmail.com'
     WEATHER_USE_TSL = 1
     WEATHER_EMAIL_SMTP_PORT = 465
-    WEATHER_EMAIL_HOST_USER = 'hitnik@gmail.com'
-    WEATHER_EMAIL_HOST_PASSWORD = 'ku$1onJwl'
+    WEATHER_EMAIL_HOST_USER = ''
+    WEATHER_EMAIL_HOST_PASSWORD = ''
 
     def ready(self):
 
