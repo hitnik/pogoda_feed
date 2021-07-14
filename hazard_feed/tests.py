@@ -19,7 +19,11 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import random
+from unittest.mock import Mock, patch
 
+raw_text = "Оранжевый уровень опасности. Днем 14-16 июля (среда-пятница) максимальная температура воздуха ожидается +30..+34&#176;С"
+
+test_text = "Днем 14-16 июля (среда-пятница) максимальная температура воздуха ожидается +30..+34°С"
 
 class TestHazardFeeds(TestCase):
     fixtures = ['hazard_feed/fixtures/hazard_levels.json']
@@ -181,9 +185,8 @@ class TestUtils(APITestCase):
     fixtures = ['hazard_levels']
 
     def test_remove_level(self):
-        text = 'Оранжевый уровень опасности. Днем 10 сентября (четверг) на большей части территории республики ожидается усиление ветра порывами до 15-20 м/с.'
-        hazard_level = hazard_level_in_text_find(text)
-        self.assertEqual(remove_hazard_level_from_feed(hazard_level, text), 'Днем 10 сентября (четверг) на большей части территории республики ожидается усиление ветра порывами до 15-20 м/с.' )
+        hazard_level = hazard_level_in_text_find(raw_text)
+        self.assertEqual(remove_hazard_level_from_feed(hazard_level, raw_text), test_text )
 
     def text_date_parser(self):
         text = 'Днем 10 сентября (четверг) на большей части территории республики ожидается усиление ветра порывами до 15-20 м/с.'
@@ -354,3 +357,5 @@ class WSTests(ChannelsLiveServerTestCase):
     @property
     def _chat_log_value(self):
         return self.driver.find_element_by_css_selector('#chat-log').get_property('value')
+
+
