@@ -24,6 +24,8 @@ from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
 from functools import wraps
+from html import unescape
+from unicodedata import normalize
 
 def hazard_level_in_text_find(text):
     """
@@ -252,17 +254,18 @@ def date_from_text_parser(url, text):
         return None, None
 
 
-def degree_decorator(func):
+def unescape_decorator(func):
 
     @wraps(func)
     def wrapper(hazard_level, text):
         result = func(hazard_level, text)
-        result = re.sub("&#176;", chr(176), result)
+        result = unescape(result)
+        result = normalize('NFKC', result)
         return result
 
     return wrapper    
 
-@degree_decorator
+@unescape_decorator
 def remove_hazard_level_from_feed(hazard_level, text):
     result = ''
     sentences = nltk.sent_tokenize(text)
